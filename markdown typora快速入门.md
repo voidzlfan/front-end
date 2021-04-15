@@ -24,7 +24,7 @@
 
 在typora中按住`ctrl + shift + 1`弹出大纲
 
-
+<br>
 
 # 代码块代码高亮
 
@@ -39,7 +39,7 @@
 
 `内容` 
 
-
+<br>
 
 # 字体
 
@@ -62,7 +62,7 @@
 
 <u>下划线</u>
 
-
+<br>
 
 # 引用
 
@@ -78,7 +78,7 @@
 >>
 >>>二级引用
 
-
+<br>
 
 # 分割线
 
@@ -90,7 +90,7 @@
 
 ---
 
-
+<br>
 
 # 图片插入
 
@@ -106,7 +106,7 @@
 
 
 
-
+<br>
 
 # 超链接
 
@@ -119,7 +119,7 @@
 
 [zlfan](https://github.com/voidzlfan)
 
-
+<br>
 
 # 列表
 
@@ -151,7 +151,7 @@
 4. 一级内容
    - 二级内容
 
-
+<br>
 
 # 任务列表
 
@@ -182,7 +182,7 @@
 | 单元格 | 单元格 |
 | 单元格 | 单元格 |
 
-
+<br>
 
 # 字体颜色大小样式
 
@@ -203,7 +203,7 @@
 
 <span style="color:red">this text is red</span>
 
-
+<br>
 
 # 脚注
 
@@ -216,7 +216,7 @@
 
 生成一个脚注[^fn1]
 
-
+<br>
 
 # 视频
 
@@ -224,7 +224,7 @@
 <video src="xxx.mp4" />
 ```
 
-
+<br>
 
 # 创建目录
 
@@ -232,7 +232,7 @@
 [toc] + 按下回车
 ```
 
-
+<br>
 
 # Emoji
 
@@ -241,11 +241,33 @@
 :happy:
 ```
 
-:happy::sweat::question:
+:happy:  :sweat: ​ :question:
+
+更多表情[参见](https://blog.csdn.net/qq_40896997/article/details/106551767)
+
+<br>
+
+## 上标和下标
+
+```html
+<p>
+    H<sub>2</sub>0
+</p>
+<p>
+    x<sup>2</sup>
+</p>
+```
+
+<p>
+    H<sub>2</sub>0
+</p>
+<p>
+    x<sup>2</sup>
+</p>
 
 
 
-[官方文档](https://support.typora.io/Markdown-Reference/) 上不去可以用加速器pigcha
+[官方文档](https://support.typora.io/Markdown-Reference/) 上不去可以用加速器[pigcha](https://github.com/pigpigchacha/PigchaVPN)
 
 
 
