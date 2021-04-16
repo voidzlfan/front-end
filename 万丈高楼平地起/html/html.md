@@ -392,6 +392,18 @@ html使用`<p>`元素标签表示段落，`<h1> ~ <h6>` 表示标题元素
 
 <br>
 
+搜索文本黄色高亮
+
+```html
+<mark>高亮</mark>
+```
+
+<mark>高亮</mark>
+
+
+
+<br>
+
 ## 超链接
 
 超链接使我们能够将我们的文档链接到任何其他文档（或其他资源），也可以链接到文档的指定部分。几乎任何网络内容都可以转换为链接，点击（或激活）超链接将使网络浏览器转到另一个网址（URL）。html通常使用`<a>`标签表示超链接
@@ -849,3 +861,36 @@ input还有一些通用规范
 
 - `autofocus`： 这个布尔属性允许您指定当页面加载时元素应该自动具有输入焦点，除非用户覆盖它，例如通过键入不同的控件。
 - `disabled`：这个布尔属性表示用户不能与元素交互。
+
+<br>
+
+## h5全局属性
+
+* `contentEditable`：允许用户在线编辑元素中的内容
+* `contextmenu`：定义元素的上下文菜单，在右键点击时出现，仅`Firefox`支持
+* `draggable`：定义元素是否可拖动，布尔
+* `dropzone`：定义元素在拖动时，是否复制、移动或链接被拖动数据。目前主流浏览器均不支持，可选值:
+  1. copy：拖动产生数据的副本
+  2. move：导致被拖动数据移动到新位置
+  3. link：拖动数据会产生指向原数据的链接
+* `hidden`：设置元素是否隐藏
+* `translate`：定义是否翻译元素内容，取值`yes`，`no`
+
+```html
+<div contentEditable="true">wenben</div>
+
+<div contextmenu="mymenu">
+    <menu type="content">上下文菜单
+    	<menuitem label="微信分享"></menuitem>
+    	<menuitem label="QQ分享"></menuitem>
+    </menu>
+</div>
+
+<div draggable="true|false|auto"></div>
+<div hidden></div>
+```
+
+
+
+<br>
+
