@@ -204,7 +204,166 @@ body h1 + p .special {
 
 <br><br>
 
-## 如何构建CSS
+## 如何引用CSS
+
+在文档中应用css三种方式
+
+### 外部样式表
+
+上一节的样式引入就是外部样式表，通过将css写入一个css文件，然后在HTML`<link>` 元素引用它，例如
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="utf-8">
+	<title>学习CSS</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>我是一级标题</h1>
+</body>    
+</html>
+```
+
+<br>
+
+### 内部样式表
+
+内部样式表是指不使用外部css文件，而是将css放在HTML文件`<head>`标签的`<style>`标签中，如
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="utf-8">
+	<title>学习CSS</title>
+    <style>
+        h1 {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>我是一级标题</h1>
+</body>    
+</html>
+```
+
+<br>
+
+
+
+### 内联样式
+
+内联样式表存在于HTML元素的style属性之中，其特点是每个css表只影响一个元素
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="utf-8">
+	<title>学习CSS</title>
+</head>
+<body>
+    <h1 style="color: red;">我是一级标题</h1>
+</body>    
+</html>
+```
+
+<br>
+
+<br>
+
+## CSS如何工作
+
+浏览器展示一个文件的过程
+
+1. 浏览器载入一个html文件
+2. 将html转化一个DOM（文档对象模型），DOM是文件在计算机内内存的表现形式
+3. 接下来，浏览器会拉取该HTML相关的大部分资源，比如嵌入到页面的图片、视频和CSS样式
+4. 浏览器拉取到css之后进行解析，根据选择器类型的不同（类，id，元素等）把它们分到不同的`bucket`中。浏览器基于他找到的不同选择器，将不同的规则（元素选择器规则、类选择器规则等）应用在对应的DOM节点中，并添加节点依赖的样式，这个步骤称为`渲染树`
+5. 将上述规则应用于渲染树之后，渲染树依照应该出现的结构进行布局
+6. 网页展示在屏幕，这一步称为着色
+
+<br>
+
+<br>
+
+## 关于DOM
+
+一个DOM有一个**`树形`**结构，html中的每一个元素、属性以及每一段文字都对应着结构树中的一个节点。节点由节点本身和其他DOM节点的关系定义，有些节点有父节点，有些节点有兄弟节点（同级节点）
+
+例如
+
+```html
+<p>
+  Let's use:
+  <span>Cascading</span>
+  <span>Style</span>
+  <span>Sheets</span>
+</p>
+```
+
+它的树形结构为
+
+```html
+p
+|--"Let's use"
+|-- span
+|     |- "cascading"
+|-- span
+|     |- "Style"
+|-- span
+      |- "Sheets"
+```
+
+
+
+<br>
+
+<br>
+
+## 构建CSS
+
+CSS有三个非常重要的特性：`层叠性`、`继承性`、`优先级`（权重）
+
+### 层叠与继承
+
+在某些时候，在做一个项目过程中你会发现一些应该产生效果的样式没有生效。通常的原因是你创建了两个应用于同一个元素的规则。这两个规则产生了冲突，导致产生错误的结果
+
+**层叠**
+
+css称为层叠样式表，它的规则顺序很重要，当两条同级别规则应用到同一元素时，写在后面的规则就是实际生效的规则，如
+
+```css
+h1 {
+    color: red;
+}
+h1 {
+    color: green;
+}
+```
+
+标题将表现为绿色
+
+<br>
+
+**优先级**
+
+浏览器根据优先级来决定具有多个选择器指定的元素要应用的规则，
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
