@@ -398,9 +398,443 @@ css一个盒子模型看起来像这样：
 
 
 
+<br>
+
+<br>
+
+## CSS布局
+
+### 介绍css布局
+
+CSS页面布局技术允许我们拾取网页中的元素，并且控制它们相对正常布局流、周边元素、父容器或者主视口/窗口的位置。将涉及到：
+
+* 正常布局流
+* `display`属性
+* 弹性盒子
+* 网格
+* 浮动
+* 定位
+* css表格布局
+* 多列布局
+
+<br>
 
 
 
+### 正常布局流
+
+正常布局流是指在不对页面进行任何布局控制时，浏览器默认的html布局方式。当你使用css创建布局时，你正在远离**正常布局流**，下列布局技术会覆盖默认的布局行为：
+
+* `diaplay`：标准的value,比如`block`, `inline` 或者 `inline-block` 元素在正常布局流中的表现形式。或是新的布局，`grid`，`flex`
+* 浮动：`float`属性，如`left`，能让**块级**元素能排列在一行之内
+* `position`属性：正常布局流中，默认值为`static`
+* 表格布局：表格布局方式可以使用在非表格内容上，`display: table`
+* 多列布局：`Multi-column layout`属性，可以让块按列布局，比如报纸的内容就是一列一列排布的
+
+默认情况下，元素是怎么布局的？
+
+首先，取得元素的内容放在一个元素盒子里，默认的，块级元素的内容是其父元素的100%，其高度与内容高度一致。而内联元素的宽高与内容一致，无法设置宽高，要想设置需要为元素添加样式`display: block`或者`display: inline-block`
+
+根据元素类型的不同，元素之间的互相影响不一致：在正常布局流中，块级元素会在上一个元素下面另外起一行，它们会被设置好的margin分隔；而内联元素则不同，它们不会另外新起一行，只要父级块级元素有足够的空间，它们与其他内联元素、文本内容被安排在一行，只有行空间不够时，溢出的内容才会移到新的一行
+
+如果两个相邻的元素都设置了margin 并且两个margin有重叠，那么更大的设置会被保留，小的则会消失 --- 这被称为外边距叠加
+
+<br>
+
+### 弹性盒子
+
+弹性盒子是一种用于按行或按列布局元素的一维布局方法 。元素可以膨胀以填充额外的空间, 收缩以适应更小的空间
+
+要想设置为弹性盒子，需要给这些要设置的元素的父元素设置
+
+```css
+div {
+    display: flex;
+}
+```
+
+flex模型说明
+
+![flex模型](./images/7.jpg)
+
+- **主轴（main axis）**是沿着 flex 元素放置的方向延伸的轴（比如页面上的横向的行、纵向的列）。该轴的开始和结束被称为 **main start** 和 **main end**。
+- **交叉轴（cross axis）**是垂直于 flex 元素放置方向的轴。该轴的开始和结束被称为 **cross start** 和 **cross end**。
+- 设置了 `display: flex` 的父元素被称之为 **flex 容器（flex container）。**
+- 在 flex 容器中表现为弹性的盒子的元素被称之为 **flex 项**（**flex item**）
+
+此外，要设置flex主轴方向，要用到`flex-direction`属性，默认值是row，横向
+
+```css
+div {
+    flex-direction: row;
+    flex-direction: row-reverse;//反向
+	flex-direction: column;
+    flex-direction: column-reverse;//反向
+}
+```
+
+当在该布局中使用定宽或者定高的时候，可能会出现问题即处于容器中的 弹性盒子子元素会溢出，破坏了布局
+
+解决此问题的一种方法是将以下声明添加到 css 规则中：
+
+```css
+flex-wrap: wrap;
+```
+
+这样，flex项当空间不足时就会自动换行
+
+属性`flex-flow`，组合了`flex-direction`和`flex-wrap`
+
+```css
+flex-flow: row wrap;
+```
+
+flex布局通常按照比例分配空间，例如有三个flex项目
+
+```css
+.div1 {
+    flex: 1;
+}
+
+.div2 {
+    flex: 1;
+}
+
+.div3 {
+    flex: 2;
+}
+```
+
+这样，就把一行的空间平均分了4份，div1和div2占一份，而div3占了一半，还可以指定每一flex项目的最小值
+
+```css
+flex: 1 200px;
+```
+
+每个flex项目可以通过order来进行排序
+
+```css
+.div1 {
+    order: 1;
+}
+```
+
+* 所有 flex 项默认的 `order` 值是 0
+* order 值大的 flex 项比 order 值小的在显示顺序中更靠后
+* 相同 order 值的 flex 项按源顺序显示。所以假如你有四个元素，其 order 值分别是2，1，1和0，那么它们的显示顺序就分别是第四，第二，第三，和第一
+* 第三个元素显示在第二个后面是因为它们的 order 值一样，且第三个元素在源顺序中排在第二个后面
+* 你也可以给 order 设置负值使它们比值为 0 的元素排得更前面
+
+<br>
+
+### 网格
+
+一个网格通常具有许多的**列（column）**与**行（row）**，以及行与行、列与列之间的间隙，这个间隙一般被称为**沟槽（gutter）**，在流行的ui框架中，如ant design，也能找到这些网格概念
+
+![网格](./images/8.jpg)
+
+首先，将容器的`display`属性设置为`grid`来定义一个网络。与弹性盒子一样，将父容器改为网格布局后，他的直接子项会变为网格项。把下面的css规则加到你的文件中
+
+```css
+display: grid;
+```
+
+与弹性盒子不同的是，在定义网格后，网页并不会马上发生变化。因为`display: grid`的声明只创建了一个只有一列的网格，所以你的子项还是会像正常布局流那样从上而下一个接一个的排布
+
+为了让我们的容器看起来更像一个网格，我们要给刚定义的网格加一些列。那就让我们加三个宽度为`200px`的列。当然，这里可以用任何长度单位，包括百分比
+
+```css
+.container {
+	display: grid;
+    grid-template-columns: 200px 200px 200px;
+}
+```
+
+下列代码将在浏览器表现为
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="utf-8">
+	<title>学习CSS</title>
+</head>
+<style>
+.container {
+	display: grid;
+    grid-template-columns: 200px 200px 200px;
+}
+.container > div {
+    border-radius: 5px;
+    padding: 10px;
+    background-color: rgb(207,232,220);
+    border: 2px solid rgb(79,185,227);
+}
+</style>
+<body>
+    <div class="container">
+		<div>1</div>
+		<div>2</div>
+		<div>3</div>
+		<div>4</div>
+		<div>5</div>
+	</div>
+</body>    
+</html>
+```
+
+![例子](./images/9.jpg)
+
+除了长度和百分比，我们也可以用`fr`这个单位来灵活地定义网格的行与列的大小。这个单位表示了可用空间的一个比例，就像flex一样
+
+```css
+.container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+```
+
+:tomato: 注意`fr`分配的是可用空间
+
+使用 [`grid-column-gap` (en-US)](https://developer.mozilla.org/en-US/docs/Web/CSS/column-gap) 属性来定义列间隙；使用 [`grid-row-gap` (en-US)](https://developer.mozilla.org/en-US/docs/Web/CSS/row-gap) 来定义行间隙；使用 [`grid-gap` (en-US)](https://developer.mozilla.org/en-US/docs/Web/CSS/gap) 可以同时设定两者
+
+```css
+.container {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    grid-gap: 20px;
+}
+```
+
+间隙距离可以用任何长度单位包括百分比来表示，但不能使用`fr`单位
+
+`grid-template-columns`属性，可以通过`repeat`函数来重复构建具有某些宽度配置的某些列
+
+```css
+.container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 20px;
+}
+```
+
+<br>
+
+到目前为止，我们定义过了列，但还没有管过行。但在这之前，我们要来理解一下显式网格和隐式网格。显式网格是我们用`grid-template-columns` 或 `grid-template-rows` 属性创建的。而隐式网格则是当有内容被放到网格外时才会生成的
+
+简单来说，隐式网格就是为了放显式网格放不下的元素，浏览器根据已经定义的显式网格自动生成的网格部分。隐式网格中生成的行/列大小是参数默认是`auto`，大小会根据放入的内容自动调整。当然，你也可以使用[`grid-auto-rows`](https://developer.mozilla.org/zh-CN/docs/Web/CSS/grid-auto-rows)和[`grid-auto-columns`](https://developer.mozilla.org/zh-CN/docs/Web/CSS/grid-auto-columns)属性手动设定隐式网格的大小
+
+```css
+.container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 30px;
+  grid-gap: 20px;
+}
+```
+
+例如，将隐式网格设置为30px，
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="utf-8">
+	<title>学习CSS</title>
+</head>
+<style>
+.container {
+	display: grid;
+    grid-template-columns: 200px 200px 200px;
+	grid-auto-rows: 30px;
+	grid-gap: 20px;
+}
+.container > div {
+    border-radius: 5px;
+    padding: 10px;
+    background-color: rgb(207,232,220);
+    border: 2px solid rgb(79,185,227);
+}
+</style>
+<body>
+    <div class="container">
+		<div>圣诞节澳两地技术的你们圣诞节澳两地技术的你们圣诞节澳两地技术的你们圣诞节澳两地技术的你们圣诞节澳两地技术的你们圣诞节澳两地技术的你们圣诞节澳两地技术的你们</div>
+		<div>2</div>
+		<div>3</div>
+		<div>4</div>
+		<div>5</div>
+	</div>
+</body>    
+</html>
+```
+
+![隐式表格](./images/10.jpg)
+
+隐式网格变小了，不能容纳更多文字
+
+要为隐式网格设置一个最小值，而且可以跟随内容自动拓展尺寸以保证容纳所有内容，可以用到`minmax`函数，我们给`grid-auto-rows`设置
+
+```css
+grid-auto-rows: minmax(100px, auto);
+```
+
+<br>
+
+将`repeat`与`minmax`结合起来，让网格自动创建很多列来填满整个容器。通过设置`grid-template-columns`属性，我们可以实现这个效果，不过这一次我们会用到`repeat`函数中的一个关键字`auto-fill`来替代确定的重复次数
+
+```css
+.container {
+	display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+	grid-auto-rows: minmax(100px, auto);
+	grid-gap: 20px;
+}
+```
+
+![自动网格](./images/11.jpg)
+
+<br>
+
+### 浮动
 
 
+
+<br>
+
+### 定位
+
+css中使用`position`指定元素定位类型
+
+* `static` 默认定位，即没有定位，遵循正常的文档流对象
+* `relative` 相对定位，相对定位元素的定位是相对其正常位置
+* `fixed`  固定定位，元素的位置相对于浏览器窗口是固定位置
+* `absolute` 绝对定位，绝对定位的元素的位置相对于最近的已定位父元素，如果元素没有已定位的父元素，那么它的位置相对于`<html>`
+* `stickly` 相对定位和固定定位的混合体
+
+元素可以使用的顶部，底部，左侧和右侧属性定位。然而，这些属性无法工作，除非是先设定position属性。他们也有不同的工作方式，这取决于定位方法。
+
+* `top`
+* `right`
+* `bottom`
+* `left`
+
+定位可能导致元素重叠，可以设置`z-index`，只接受无单位数值，值越大，元素越排前
+
+
+
+<br>
+
+### 多列布局
+
+带有 `.container` 的div将成为我们多列布局的容器。 通过这两个属性`column-count`或者`column-width`开启多列布局，通过以下，你将得到3列
+
+```css
+.container {
+  column-count: 3;
+  //浏览器按照你指定的宽度尽可能创建多的列
+  //这意味着你可能无法期望得到你指定宽度
+  column-width: 200px;
+}
+```
+
+加入列间隙
+
+```css
+.container {
+  column-width: 200px;
+  column-gap: 20px;
+}
+```
+
+`column-rule`，与`border`属性类似
+
+```css
+.container {
+  column-count: 3;
+  column-gap: 20px;
+  column-rule: 4px dotted rgb(79, 185, 227);
+}
+```
+
+
+
+<br>
+
+### 媒体查询入门
+
+**CSS媒体查询**为你提供了一种应用CSS的方法，仅在浏览器和设备的环境与你指定的规则相匹配的时候CSS才会真的被应用，例如“视口宽于480像素”的时候
+
+基础语法
+
+```css
+@media media-type and (media-feature-rule) {
+  /* CSS rules go here */
+}
+```
+
+- 一个媒体类型，告诉浏览器这段代码是用在什么类型的媒体上的（例如印刷品或者屏幕），类型包括`all` `print` `screen` `speech`
+- 一个媒体表达式，是一个被包含的CSS生效所需的规则或者测试
+- 一组CSS规则，会在测试通过且媒体类型正确的时候应用
+
+例如，要想在视口正好是600像素的时候，让body的文本变为红色，你可能会使用下面的媒体查询
+
+```css
+@media screen and (width: 600px) {
+    body {
+        color: red;
+    }
+}
+```
+
+`width`（和`height`）媒体特征可以以数值范围使用，于是就有了`min-`或者`max-`的前缀，指示所给的值是最小值还是最大值。例如，要让颜色在视口窄于400像素的时候变成蓝色的话，可以用`max-width`：
+
+```css
+@media screen and (max-width: 400px) {
+    body {
+        color: blue;
+    }
+}
+```
+
+一个受到良好支持的媒体特征是`orientation`，我们可以用它测得竖放（portrait mode）和横放（landscape mode）模式
+
+```css
+@media (orientation: landscape) {
+    body {
+        color: rebeccapurple;
+    }
+}
+```
+
+<br>
+
+媒体查询与逻辑
+
+```css
+@media screen and (min-width: 400px) and (orientation: landscape) {
+    body {
+        color: blue;
+    }
+}
+```
+
+媒体查询或逻辑
+
+```css
+@media screen and (min-width: 400px), screen and (orientation: landscape) {
+    body {
+        color: blue;
+    }
+}
+```
+
+媒体查询非逻辑，你可以用`not`操作符让整个媒体查询失效
+
+```css
+@media not all and (orientation: landscape) {
+    body {
+        color: blue;
+    }
+}
+```
 
