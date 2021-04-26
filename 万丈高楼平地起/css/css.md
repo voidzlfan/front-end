@@ -697,6 +697,29 @@ grid-auto-rows: minmax(100px, auto);
 
 ### 浮动
 
+浮动的框可以向左或向右移动，直到它的外边缘碰到包含框或另一个浮动框的边框为止。由于浮动框不在文档的普通流中，所以文档的普通流中的块框表现得就像浮动框不存在一样
+
+```css
+float: left;
+float: right;
+float: none;
+float: inherit;
+```
+
+清除浮动
+
+在所要清除的元素后新增一个没有意义的标签，给标签使用`clear`属性
+
+```html
+<div class="clearfix"></div>
+```
+
+```css
+.clearfix {
+  clear: both;
+}
+```
+
 
 
 <br>
