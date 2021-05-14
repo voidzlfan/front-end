@@ -4,6 +4,38 @@
 
 `JavaScript` 是一种编程语言，主要参与构建 Web 前端应用。
 
+- [JavaScript](#javascript)
+  * [基础](#--)
+    + [变量](#--)
+    + [数据类型](#----)
+    + [if语句](#if--)
+    + [for语句](#for--)
+    + [算数运算符](#-----)
+    + [比较运算符](#-----)
+    + [逻辑运算符](#-----)
+    + [表达式](#---)
+    + [函数](#--)
+    + [对象](#--)
+    + [字符串](#---)
+    + [数字](#--)
+    + [数组](#--)
+    + [switch语句](#switch--)
+    + [while语句](#while--)
+    + [document.cookie](#documentcookie)
+  * [内置对象](#----)
+    + [Function](#function)
+    + [Math](#math)
+    + [Date](#date)
+    + [RegExp](#regexp)
+    + [JSON](#json)
+  * [JavaScript 与 DOM](#javascript---dom)
+    + [什么是 DOM](#----dom)
+    + [获取和操作 DOM 节点](#------dom---)
+    + [DOM 与事件](#dom----)
+    + [DOM 事件绑定](#dom-----)
+    + [DOM 事件对象](#dom-----)
+    + [DOM 事件流](#dom----)
+
 <br>
 
 ## 基础
@@ -434,7 +466,7 @@ JavaScript 中的逻辑运算有三种：
 - `||` 或 (或者)
 - `!` 非 (取反)
 
-与操作在左侧的表达式结果为 `true` 或者可以`隐式转换为true`的时候，会返回右侧表达式结果，否则返回左侧表达式结果。
+**与操作符**在左侧的表达式结果为 `true` 或者可以`隐式转换为true`的时候，会返回右侧表达式结果，否则返回左侧表达式结果。
 
 ```javascript
 true && true; // true
@@ -443,7 +475,7 @@ false && true; // false
 false && false; // false
 ```
 
-或操作符在当有表达式的结果为 true 或者可以隐式转换为 true 的时候，就返回这个表达式的结果，如果没有则返回右侧表达式的结果。
+**或操作符**在当有表达式的结果为 true 或者可以隐式转换为 true 的时候，就返回这个表达式的结果，如果没有则返回右侧表达式的结果。
 
 ```javascript
 true || true; // true
@@ -452,7 +484,7 @@ false || true; // true
 false || false; // false
 ```
 
-非就是取反。表达式结果如果是布尔值，则会直接取反，结果如果不是布尔值，则会转换成布尔值再取反。
+**非**就是取反。表达式结果如果是布尔值，则会直接取反，结果如果不是布尔值，则会转换成布尔值再取反。
 
 ```javascript
 !true; // false
@@ -807,33 +839,51 @@ JavaScript 支持以下特殊字符的转义：
 
 字符串常用属性及方法：
 
+1. 访问
+
 ```javascript
+//length
 var str = "asgrhg";
 console.log(str.length);
 
 //访问指定下标字符
 str[0];
 str.charAt(0);
+```
 
+2. 大小写
+
+```javascript
 //转化大写小写
 str.toUpperCase();
 str.toLowerCase();
+```
 
-//查找子字符串
+3. 查找子串
+
+```javascript
 str.indexOf('g');//返回匹配成功的位置，没找则返回-1
 str.lastIndexOf('g');//反向查找
+```
 
+4. 截取字符串
+
+```javascript
 //获取、截取子字符串
 str.slice(0, 5);//从0-5的子字符串，不包括5：asgrh
 //从右边的第三个位置开始，在右边的第一个位置结束
 str.slice(-3, -1); //'rh'
 //个人理解：如果是正向，按下标从0开始，左闭右开区间；
 //如果是逆向，按从1开始，逆向第一个字符就是-1，左闭右开区间；
+
 str.substring(0, 5);//同slice
 //返回从指定位置开始，长为n的子字符串
 str.substr(0, 5);
+```
 
-//字符串与字符数组的互相转换
+5. 字符串与字符数组的互相转换
+
+```javascript
 let strArray = str.splite('');//["a", "s", "g", "r", "h", "g"]
 strArray.join('');//"asgrhg"
 ```
@@ -998,11 +1048,11 @@ console.log(arr);//[6, 7, 3, 4, 5]
 ```javascript
 //在尾部增减
 var arr = [1, 2, 3, 4, 5];
-arr.push(6);
+arr.push(6);//[1 ,2 ,3 ,4 ,5 ,6]
 arr.pop();//删除最后一项，返回删除的值
 
 //在头部增减
-arr.unshift(0);
+arr.unshift(0);//[0, 1, 2, 3, 4, 5]
 arr.shift();//删除第一项，返回删除的值
 ```
 
@@ -1058,7 +1108,7 @@ for (i in arr) {
 }
 ```
 
-数组中 4 被删除了，两个遍历数组均打印
+数组中 4 被删除了，上述两个遍历数组均打印
 
 ```javascript
 0 1
@@ -1352,6 +1402,8 @@ formatTimeStamp(1620872949908);//"2021/5/13 10:29:9"
 
 > RegExp 构造函数创建了一个正则表达式对象，用于将文本与一个模式匹配。
 
+1. 创建 RegExp 对象
+
 ```javascript
 //两种方式创建
 var 变量名 = new RegExp(/表达式/);
@@ -1366,6 +1418,8 @@ reg.test(str2);  //false
 ```
 
 正则表达式可以由简单字符构成，如 /abc/ ，也可以是简单字符加特殊字符的组合，如 /ab*c/。其中特殊字符被称作`元字符`，它在正则表达式中具有特殊意义，如 ^，$，+。
+
+2. 特殊字符
 
 **边界符**
 
@@ -1486,7 +1540,7 @@ str.replace(/ABC/g,'abc');	//返回新字符串 'abcabc'
 var reg = /abc\*/;
 ```
 
-常用正则表达式汇总
+3. 常用正则表达式汇总
 
 URL
 
@@ -1808,7 +1862,7 @@ DOM 提供了许多事件供开发者进行绑定，以响应各种操作，丰�
 
 想要触发事件，就得先给 DOM 节点绑定事件，提供事件处理器。
 
-1. 直接再 HTML 上提供事件
+1. 直接在 HTML 上提供事件
 
 ```html
 <style>
@@ -1847,13 +1901,11 @@ DOM 提供了许多事件供开发者进行绑定，以响应各种操作，丰�
 </button>
 
 <script>
-  var btn = document.querySelector('.btn');
-
-  btn.onclick = function() {
-    var text = btn.innerText;
-
-    btn.innerText = text.replace('一切', '世界');
-  };
+	var btn = document.querySelector('.btn');
+	btn.onclick = function() {
+		var text = btn.innerText;
+		btn.innerText = text.replace('一切', '世界');
+	};
 </script>
 ```
 
@@ -1866,10 +1918,10 @@ DOM 提供了许多事件供开发者进行绑定，以响应各种操作，丰�
 
 <script>
 	var btn = document.querySelector('.btn');
-    btn.addEventListener('click', function() {
-        var text = btn.innerText;
-   		btn.innerText = text.replace('一切', '世界');
-    }
+	btn.addEventListener('click', function() {
+		var text = btn.innerText;
+		btn.innerText = text.replace('一切', '世界');
+	}
 </script>
 ```
 
@@ -2047,7 +2099,7 @@ btn.addEventListener('click', function(e) {
 
 点击后，观察输出可以发现，事件是点击到的最深层次的节点开始向上执行的。
 
-即从 `size-100` 到 `size-200` 到 `size-300`，这就是冒泡的过程。
+即从 `size-100` 到  `size-200` 到 `size-300`，这就是冒泡的过程。
 
 如果想让事件在捕获阶段就执行，可以传递 `addEventListener` 方法第三个参数，该参数为布尔值。
 
