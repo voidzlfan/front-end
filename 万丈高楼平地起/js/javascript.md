@@ -4,7 +4,37 @@
 
 `JavaScript` 是一种编程语言，主要参与构建 Web 前端应用。
 
-[TOC]
+- [JavaScript](#javascript)
+  - [基础](#基础)
+    - [变量](#变量)
+    - [数据类型](#数据类型)
+    - [if语句](#if语句)
+    - [for语句](#for语句)
+    - [算数运算符](#算数运算符)
+    - [比较运算符](#比较运算符)
+    - [逻辑运算符](#逻辑运算符)
+    - [表达式](#表达式)
+    - [函数](#函数)
+    - [对象](#对象)
+    - [字符串](#字符串)
+    - [数字](#数字)
+    - [数组](#数组)
+    - [switch语句](#switch语句)
+    - [while语句](#while语句)
+    - [document.cookie](#documentcookie)
+  - [内置对象](#内置对象)
+    - [Function](#function)
+    - [Math](#math)
+    - [Date](#date)
+    - [RegExp](#regexp)
+    - [JSON](#json)
+  - [JavaScript 与 DOM](#javascript-与-dom)
+    - [什么是 DOM](#什么是-dom)
+    - [获取和操作 DOM 节点](#获取和操作-dom-节点)
+    - [DOM 与事件](#dom-与事件)
+    - [DOM 事件绑定](#dom-事件绑定)
+    - [DOM 事件对象](#dom-事件对象)
+    - [DOM 事件流](#dom-事件流)
 
 <br>
 
