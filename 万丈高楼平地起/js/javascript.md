@@ -35,6 +35,15 @@
     - [DOM 事件绑定](#dom-事件绑定)
     - [DOM 事件对象](#dom-事件对象)
     - [DOM 事件流](#dom-事件流)
+  - [JavaScript 与 BOM](#javascript-与-bom)
+    - [什么是 BOM](#什么是-bom)
+    - [Screen](#screen)
+    - [Location](#location)
+    - [Navigator](#navigator)
+    - [History](#history)
+    - [弹出框](#弹出框)
+    - [Timing 事件](#timing-事件)
+  - [AJAX](#ajax)
 
 <br>
 
@@ -2116,4 +2125,298 @@ box.addEventListener('click', function() {
 **请描述一下事件捕获和冒泡的具体流程**
 
 ​        首先解释下为什么会有事件捕获和冒泡事件产生，现在假如我有一个 div 标签，里面嵌套了一个 p 标签，两者均绑定了同类型 click 事件，这时当我点击时，这两个标签上的事件该按照什么顺序去执行呢？这时，it 届两大公司提出了不同的解决方案，网景公司提出了事件捕获模型，先执行外层的事件一直到触发事件的 DOM 节点；而微软则是提出了冒泡模型，首先执行触发的事件的 DOM 节点上的事件，然后逐层向外执行同类型事件。后来 W3C 整合了这两种模型，任何事件触发时，先从顶层开始进行事件捕获，直到事件源元素，然后，再从事件源往上进行冒泡到 document 。我们可以在 `addEventListener` 绑定事件的时候，指定它的第三个参数，是否启用捕获事件，true 则启动，默认采用的是冒泡模型。此外，当我们在捕获的时候，使用 `e.stopPropagation()` 可以阻止事件的冒泡。
+
+<br>
+
+## JavaScript 与 BOM
+
+<br>
+
+### 什么是 BOM
+
+BOM 即浏览器对象模型（browser object model），其提供了一系列接口供开发者使用 `JavaScript` 与浏览器窗口进行交互。
+
+BOM 不像 ECMAScript 和 DOM 有一套自己的标准，BOM 是没有公共组织制定标准的。
+神奇的是所有现代浏览器在 BOM 的相关内容上几乎一致，所以 BOM 也足够通用，所有浏览器的实现几乎一致。
+
+**Window 对象**
+
+所有浏览器都支持 *window* 对象。它代表浏览器的窗口。
+
+所有全局 JavaScript 对象，函数和变量自动成为 window 对象的成员。
+
+全局变量是 window 对象的属性。
+
+全局函数是 window 对象的方法。
+
+该对象上挂载了一些常用的对象或属性：
+
+* **Screen**：用户屏幕的信息，如屏幕的长宽
+* **Location**：当前页面地址相关信息，如当前页面地址
+* **History**：浏览器的历史相关信息，如返回上一页
+* **Navigator**：前浏览器相关信息，如浏览器版本
+* **弹出框**：警告框、确认框和提示框
+* **Timing 事件**：定时器，在时间间隔内执行
+
+以上内容可以不带 window 前缀直接使用
+
+<br>
+
+### Screen
+
+<br>
+
+```javascript
+//实际屏幕宽高
+screen.width
+screen.height
+
+//浏览器可用宽高
+screen.availWidth
+screen.availHeight
+
+//色深
+screen.colorDepth
+
+//像素深度
+screen.pixelDepth
+
+//对于现代计算机，颜色深度和像素深度是相等的。
+```
+
+<br>
+
+### Location
+
+<br>
+
+**对象可用于获取当前页面地址（URL）并把浏览器重定向到新页面**
+
+```javascript
+//当前页面的 URL
+location.href
+
+//当前页面的因特网主机的名称
+location.hostname
+
+//当前页面的路径名，这是重点
+location.pathname
+
+//当前页面的 web 协议
+location.protocol
+
+//当前页面的互联网主机端口的编号
+location.port
+
+//加载新文档
+location.assign('https://www.w3school.com.cn')
+```
+
+<br>
+
+### Navigator
+
+<br>
+
+```javascript
+//浏览器应用程序名称
+navigator.appName
+
+//浏览器应用程序代码名称
+navigator.appCodeName
+
+//浏览器引擎
+navigator.product
+
+//浏览器版本
+navigator.appVersion
+
+//浏览器代理
+//警告：来自 navigator 对象的信息通常是误导性的，不应该用于检测浏览器版本
+navigator.userAgent
+
+//浏览器平台
+navigator.platform
+
+//浏览器语言
+navigator.language
+
+//浏览器是否在线
+navigator.onLine
+```
+
+<br>
+
+### History
+
+<br>
+
+```javascript
+//加载历史列表中前一个 URL
+history.back()
+
+//加载历史列表中下一个 URL
+history.forward()
+
+//替换当前 URL，当前 URL 将无法回退
+history.replace()
+
+//跳转到历史列表的某个 URL
+history.go(n)
+```
+
+监听路由，事件 `popstate`
+
+```javascript
+window.addEventListener('popstate', function(e) {
+    console.log({
+      location: location.href,
+      state: e.state
+    });
+}, false);
+```
+
+通过 `history.pushState` 可以改变页面的路径，但不会触发页面的跳转。
+
+<br>
+
+### 弹出框
+
+<br>
+
+```javascript
+//警告框
+alert("我是一个警告框！");
+
+//确认框，返回布尔值
+confirm("sometext");
+
+//提示框，第二参数为默认值
+prompt("sometext","defaultText");
+```
+
+<br>
+
+### Timing 事件
+
+<br>
+
+```javascript
+//在等待指定的毫秒数后执行函数
+setTimeout(function, milliseconds)
+
+//等同于 setTimeout()，但持续重复执行该函数
+setInterval(function, milliseconds)
+```
+
+两秒后打印文字
+
+```javascript
+setTimeout(function(){
+    console.log('这屋还有谁叫咪咪');
+}, 2000)
+```
+
+每间隔一秒打印时间
+
+```javascript
+setInterval(function(){
+    console.log(new Date());
+}, 1000)
+```
+
+清除定时器，`setTimeout` ，`setInterval` 在创建的时候均可以用一个变量接收，然后使用 `clearInterval` 清除
+
+```javascript
+var timer = setInterval(function(){
+    console.log(new Date());
+}, 1000);
+
+//清除定时器
+clearInterval(timer);
+```
+
+如果创建时未用变量接收，则可以使用下面方法清除所有的定时器
+
+```javascript
+var timerId = setTimeout(() => {  }, 0);
+while(id > 0){
+	window.clearTimeout(id)
+	timerId--;
+}
+```
+
+<br>
+
+## AJAX
+
+<br>
+
+> Asynchronous JavaScript + XML（异步JavaScript和XML）, 其本身不是一种新技术，而是一个在 2005年被Jesse James Garrett提出的新术语，用来描述一种使用现有技术集合的‘新’方法。(MDN)
+
+**AJAX 特点**
+
+- 不刷新页面更新网页
+- 在页面加载后从服务器请求数据
+- 在页面加载后从服务器接收数据
+- 在后台向服务器发送数据
+
+**AJAX 的工作流程**
+
+1. 网页中发生一个事件（页面加载、按钮点击）
+2. 由 JavaScript 创建 XMLHttpRequest 对象
+3. XMLHttpRequest 对象向 web 服务器发送请求
+4. 服务器处理该请求
+5. 服务器将响应发送回网页
+6. 由 JavaScript 读取响应
+7. 由 JavaScript 执行正确的动作（比如更新页面）
+
+由此可见，AJAX 的核心是 `XMLHttpRequest` 对象，可以提供给前端开发人员使用 `JavaScript` 发起 HTTP 请求的能力。所有现代浏览器都支持 XMLHttpRequest 对象，该对象会被简称为 `XHR` 对象
+
+```javascript
+var xhr = new XMLHttpRequest();
+```
+
+这样就获得到了一个 `XHR` 对象的实例。接下来可以使用它发起请求。
+
+```javascript
+var xhr = new XMLHttpRequest();
+
+//当 readyState 改变的时候
+xhr.onreadystatechange = function() {
+    //判断当前请求的状态 与 请求的状态码
+    if (xhr.readyState === 4 && xhr.status === 200) {
+        console.log(xhr.responseText); 
+    }
+}
+
+//设定 GET 请求，请求的路径是 /，并且请求是异步的
+xhr.open('GET', '/', true);
+//发送
+xhr.send(); 
+```
+
+XMLHttpRequest 对象方法
+
+| 方法                                          | 描述                                                         |
+| :-------------------------------------------- | :----------------------------------------------------------- |
+| new XMLHttpRequest()                          | 创建新的 XMLHttpRequest 对象                                 |
+| abort()                                       | 取消当前请求                                                 |
+| getAllResponseHeaders()                       | 返回头部信息                                                 |
+| getResponseHeader()                           | 返回特定的头部信息                                           |
+| open(*method*, *url*, *async*, *user*, *psw*) | 规定请求method：请求类型 GET 或 POSTurl：文件位置async：true（异步）或 false（同步）user：可选的用户名称psw：可选的密码 |
+| send()                                        | 将请求发送到服务器，用于 GET 请求                            |
+| send(*string*)                                | 将请求发送到服务器，用于 POST 请求                           |
+| setRequestHeader()                            | 向要发送的报头添加标签/值对                                  |
+
+XMLHttpRequest 对象属性
+
+| 属性               | 描述                                                         |
+| :----------------- | :----------------------------------------------------------- |
+| onreadystatechange | 定义当 readyState 属性发生变化时被调用的函数                 |
+| readyState         | 保存 XMLHttpRequest 的状态。0：请求未初始化1：服务器连接已建立2：请求已收到3：正在处理请求4：请求已完成且响应已就绪 |
+| responseText       | 以字符串返回响应数据                                         |
+| responseXML        | 以 XML 数据返回响应数据                                      |
+| status             | 返回请求的状态号200: "OK"403: "Forbidden"404: "Not Found"如需完整列表请访问 [Http 消息参考手册](https://www.w3school.com.cn/tags/ref_httpmessages.asp) |
+| statusText         | 返回状态文本（比如 "OK" 或 "Not Found"）                     |
 
