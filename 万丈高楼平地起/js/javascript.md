@@ -263,6 +263,42 @@ console.log(val1); // 输出：1
 
 而值类型进行复制后，则是一个新的值。
 
+**判读数据类型**
+
+有三种方式进行判断
+
+```javascript
+//typeof，返回变量的数据类型的小写字符串表达
+//可以判断：undefined / 数值 / 字符串 / 布尔值 / function
+//不能判断：null 与 object // object 与 array
+var a;
+console.log(a, typeof a, typeof a === 'undefined')
+
+//instanceof，判断对象的具体类型
+function Person(){
+    this.name = 'zlfan';
+}
+var person = new Person();
+console.log(person instanceof Person);//true
+
+//===，可以判断 undefined 和 null
+console.log(a, a === undefined)
+```
+
+undefined 与 null 的区别
+
+* undefined 已经定义了变量，但是未进行赋值
+* null 已经定义了变量，值是值是 null
+
+```javascript
+//表明将要赋值为对象，初始化为 null
+var a = null;
+//其实下面这种更好
+var a = {}
+//释放对象，切断引用，使它指向的对象成为垃圾对象
+a = null;
+```
+
 <br>
 
 ### if语句
@@ -2340,7 +2376,7 @@ clearInterval(timer);
 
 ```javascript
 var timerId = setTimeout(() => {  }, 0);
-while(id > 0){
+while(timerId > 0){
 	window.clearTimeout(id)
 	timerId--;
 }
@@ -2404,7 +2440,7 @@ XMLHttpRequest 对象方法
 | abort()                                       | 取消当前请求                                                 |
 | getAllResponseHeaders()                       | 返回头部信息                                                 |
 | getResponseHeader()                           | 返回特定的头部信息                                           |
-| open(*method*, *url*, *async*, *user*, *psw*) | 规定请求method：请求类型 GET 或 POSTurl：文件位置async：true（异步）或 false（同步）user：可选的用户名称psw：可选的密码 |
+| open(*method*, *url*, *async*, *user*, *psw*) | 规定请求method：请求类型 GET 或 POSTurl：异步async：true（异步）或 false（同步）user：可选的用户名称 psw：可选的密码 |
 | send()                                        | 将请求发送到服务器，用于 GET 请求                            |
 | send(*string*)                                | 将请求发送到服务器，用于 POST 请求                           |
 | setRequestHeader()                            | 向要发送的报头添加标签/值对                                  |
