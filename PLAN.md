@@ -17,7 +17,7 @@
 - css3
 - javascript基础
 - javascript高级
-- less
+- less & sass
 - html5
 - jQuery
 - ajax
