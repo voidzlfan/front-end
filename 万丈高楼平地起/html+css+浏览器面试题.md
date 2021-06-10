@@ -202,8 +202,3 @@ img {
     - 不要在 html 中缩放图片
 
 
-
-<details><summary>答案</summary>解析</details>
-
-<details> <summary style='color:red;'>展开查看规范</summary> 这是展开后的内容1 </details>
-

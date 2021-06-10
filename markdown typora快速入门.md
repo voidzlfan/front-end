@@ -281,7 +281,7 @@
 
 <br>
 
-## 上标和下标
+# 上标和下标
 
 <br>
 
@@ -300,6 +300,18 @@
 <p>
     x<sup>2</sup>
 </p>
+<br>
+
+# 折叠
+
+```html
+<details>
+    <summary>答案</summary>
+    xxxxxx解析
+</details>
+```
+
+<details><summary>答案</summary>xxxxxx解析</details>
 
 
 
