@@ -1,9 +1,3 @@
-# JavaScript
-
-> JavaScript ( JS ) 是一种具有函数优先的轻量级，解释型或即时编译型的编程语言。(MDN)
-
-`JavaScript` 是一种编程语言，主要参与构建 Web 前端应用。
-
 - [JavaScript](#javascript)
   - [基础](#基础)
     - [变量](#变量)
@@ -44,6 +38,13 @@
     - [弹出框](#弹出框)
     - [Timing 事件](#timing-事件)
   - [AJAX](#ajax)
+
+
+# JavaScript
+
+> JavaScript ( JS ) 是一种具有函数优先的轻量级，解释型或即时编译型的编程语言。(MDN)
+
+`JavaScript` 是一种编程语言，主要参与构建 Web 前端应用。
 
 <br>
 
