@@ -981,3 +981,148 @@ html {
 width: 设计稿宽度/40rem;
 ```
 
+<br>
+
+### 过渡、变形以及动画
+
+**过渡**
+
+图形变化时的过渡效果通过使用 `transition` 属性进行设置
+
+```css
+/* 简写：指定需要过度的属性和持续时间 */
+transition: all 1s;
+
+/* 多个属性间用逗号隔开，都需要则使用all */
+/* 注意必须要从一个有效值开始变化，即要有初始值 */
+transition-property: height, width;
+
+/* 持续时间对应多个属性同样逗号隔开 */
+transition-duration: 1s, 0.5s;
+
+/* 过渡的时序函数 */
+/* 
+	ease 慢速开始，先加速再减速 
+	linear 匀速 
+	ease-in 加速运动 
+	ease-out 减速运动
+	ease-in-out 先加速再减速
+	cubic-bezier() 贝塞尔曲线
+	steps(3,end) 分几步走完过渡,第二个参数可为 start | end ,时间开始或结束执行，可做跑步动画
+*/
+transition-timing-function: cubic-bezier();
+
+/* 过渡效果延迟 */
+transition-delay: 0s;
+```
+
+<br>
+
+**变形**
+
+transform 属性用来设置元素的变形效果，变形通常设计平移、旋转和缩放
+
+```css
+/* 平移 */
+/* 通常有三个值来设置平移：translateX() translateY() translateZ() */
+transform: translateX(45deg);
+```
+
+这里有一个水平垂直居中技巧，让没有设置宽高的元素居中
+
+```css
+xxx {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%); 
+}
+```
+
+```css
+/* 旋转 */
+rotateX(45deg);
+rotateY(45deg);
+
+/* Z轴要设置perspective */
+rotateZ(45deg);   
+
+/* 旋转是否显示背面 */
+backface-visibility: hidden; 
+
+transform-style: preserve-3d /* 设置3D变形效果 */
+transform: rotateX(45deg);
+```
+
+```css
+/* 缩放 */
+scaleX()
+scaleY()
+scale()
+/* 改变旋转中心原点，默认中心为原点 */
+transform-origin
+```
+
+**动画**
+
+使用关键字 `@keyframes` 来设置动画，语法如下
+
+```css
+@keyframes 动画名 {
+    from {
+        transform: translateX(0%);
+    }
+    to {
+        transform: translateX(100%);
+    }
+}
+
+/* 或者可以设置百分比 */
+@keyframes 动画名 {
+  0% { top: 0; left: 0; }
+  30% { top: 50px; }
+  68%, 72% { left: 50px; }
+  100% { top: 100px; left: 100%; }
+}
+```
+
+这样就设置好了动画，等其他元素调用，如
+
+```css
+/* 要对当前元素生效的关键帧名 */
+animation-name: animName;
+
+/* 动画持续时间 */
+animation-duration: 2s;
+
+/* 动画延迟开始执行时间 */
+animation-delay: 0s;
+
+/* 动画的时序函数同 transition */
+animation-timing-function: ease-in;
+
+/* 动画执行的次数，可选值次数或 infinite */
+animation-iteration-count: infinite;
+
+/* 动画运行的方向，可选值 
+	normal，默认从from到to执行
+	reverse，从to到from执行
+	alternate，从from到to执行，重复执行动画时，反向执行
+	alternate-reverse，从to到from执行，重复执行动画时，反向执行
+*/
+animation-direction: normal;
+
+/* 动画的运行状态 runnning | paused */
+animation-play-state: paused;
+
+/* 动画的填充模式 
+	可选值
+	none，默认，动画执行完毕回到原始位置
+	forwards，动画执行完毕，元素停止在结束位置
+	backwards，动画演示等待时，元素就会处于开始位置
+	both，forwards和backwards结合体
+*/
+animation-fill-mode: none;
+```
+
+<br>
