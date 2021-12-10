@@ -1,4 +1,4 @@
-# ES6 - ES11
+# ES6
 
 ## let
 
@@ -1039,3 +1039,494 @@ console.log(Object.getPrototypeOf(school)); // ['北京', '上海', '深圳']
 ```
 
 <br>
+
+## 模块化
+
+模块化是指将一个大的程序文件，拆分成许多小的文件，然后将小文件组合起来
+
+模块化的好处
+
+1.  防止命名冲突
+2. 代码复用
+3. 高维护性
+
+<br>
+
+**ES6 模块化语法**
+
+模块功能主要由两个命令构成：export 和 import
+
+* export 命令用于规定模块的对外接口（导出模块）
+* import 命令用于输入其他模块提供的功能（导入模块）
+
+1. 导出模块
+
+```javascript
+// 分别暴露
+export let school = 'xxx';
+export function teach(){
+	console.log("我们可以教你开发技术！");
+}
+// or 集体暴露
+//let school = 'xxx';
+//function teach(){
+//	console.log("我们可以教你开发技术！");
+//}
+//export { school, teach }
+
+```
+
+```html
+<script type="module">
+// 引入m.js模块内容
+	import * as m from "./js/m.js";
+	console.log(m);
+	console.log(m.school);
+	m.teach();
+</script>
+```
+
+另外一种暴露方法，就是默认暴露，暴露的对象存在 default 对象里面
+
+```javascript
+// 默认暴露
+export default {
+    school: 'yyy'
+    study: function(){
+        console.log('学习知识')
+    }
+}
+```
+
+```html
+<script type="module">
+	import * as o from "./js/o.js";
+	console.log(o);
+	// 注意这里调用方法的时候需要加上default
+	console.log(o.default.school);
+	o.default.study();
+</script>
+```
+
+<br>
+
+2. 导入模块
+
+```javascript
+// 1.通用导入
+import * as m1 from './js/m1.js';
+
+// 2.解构赋值形式
+import { school, teach } from './js/m2.js';
+// 解构赋值可以用 as 使用别名，防止变量名重复
+import { school as sc, teach } from './js/m2.js';
+
+// 3.导入默认暴露模块
+// 注意：不能直接使用 default，必须使用别名
+import { default as m3 } from './js/m3.js';
+
+// 4.简便形式，针对默认暴露，直接用变量接受
+// 表示这个变量就是 default 对象
+import m3 from './js/m3.js';
+```
+
+整合引入模块
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>使用模块化的另一种方式</title>
+</head>
+<body>
+<script src="./js/app.js" type="module"></script>
+</body>
+</html>
+```
+
+```javascript
+// app.js 引入不同模块内容
+import * as m from "./m.js";
+import * as m2 from "./m2.js";
+```
+
+<br>
+
+<br>
+
+# ES7
+
+1. Array.prototype.includes
+
+Includes 方法用来检测数组中是否包含某个元素，返回布尔类型值； 判断数组中是否包含某元素，语法：arr.includes(元素值)；
+
+```javascript
+// includes
+let arr = [1, 2, 3, 4, 5];
+console.log(arr.includes(1));
+```
+
+2. 指数操作符
+
+在 ES7 中引入指数运算符「`**`」，用来实现幂运算，功能与 Math.pow 结果相同； 幂运算的简化写法，例如：2的10次方：2**10；
+
+```javascript
+// 指数操作符
+console.log(Math.pow(2, 10))
+console.log(2 ** 10);
+```
+
+<br>
+
+<br>
+
+# ES8 重点
+
+## async 和 await
+
+async 和 await 两种语法结合可以让异步代码看起来像同步代码一样
+
+async 函数
+
+1. async 函数的返回值为 promise 对象
+2. promise 对象的结果由 async 函数执行的返回值决定
+
+```javascript
+// async 函数
+async function fn(){
+    // 1.返回非 promise 类型数据，都会封装成成功态的 promise 对象
+    // 2.抛出错误，返回失败的 promise 对象
+    // 3.若返回的是 Promise 对象，那么返回的结果就是Promise 对象的结果
+    return new Promise((resolve,reject)=>{
+		// resolve("成功啦！");
+		reject('失败啦！');
+	})
+}
+
+const result = fn();
+result.then(value => {
+	console.log(value);
+}, err => {
+	console.warn(err);
+});
+```
+
+<br>
+
+await 表达式
+
+1. await 必须写在 async 函数中
+2. await 右侧的表达式一般为 promise 对象
+3. await 返回的是 promise 成功的值
+4.  await 的 promise 失败了, 就会抛出异常, 需要通过 try...catch 捕获处理
+
+```javascript
+// async函数 + await表达式：异步函数
+// 创建Prmise对象
+const p = new Promise((resolve,reject)=>{
+	resolve("成功啦！");
+})
+
+async function fn(){
+	// await 返回的是 promise 成功的值
+    try{
+        let result = await p;
+        console.log('成功啦')
+    }catch(e){
+        console.log(e);
+    }
+}
+
+fn();
+```
+
+<br>
+
+**async 与 await 实践**
+
+例1：读取文件
+
+```javascript
+// 导入模块
+const fs = require("fs");
+// 读取
+function readText() {
+	return new Promise((resolve, reject) => {
+		fs.readFile("../resources/text.txt", (err, data) => {
+			//如果失败
+			if (err) reject(err);
+			//如果成功
+			resolve(data);
+		})
+	})
+}
+
+function readText1() {
+	return new Promise((resolve, reject) => {
+		fs.readFile("../resources/text1.txt", (err, data) => {
+			//如果失败
+			if (err) reject(err);
+			//如果成功
+			resolve(data);
+		})
+	})
+}
+
+function readText2() {
+	return new Promise((resolve, reject) => {
+		fs.readFile("../resources/text2.txt", (err, data) => {
+			//如果失败
+			if (err) reject(err);
+			//如果成功
+			resolve(data);
+		})
+	})
+}
+
+//声明一个 async 函数
+async function fn(){
+	//获取为学内容
+	let t0 = await readText();
+	//获取插秧诗内容
+	let t1 = await readTest1();
+	// 获取观书有感
+	let t2 = await readTest2();
+    
+	console.log(t0.toString());
+	console.log(t1.toString());
+	console.log(t2.toString());
+}
+
+fn();
+```
+
+<br>
+
+例2：发送 AJAX 请求
+
+```javascript
+// 实际会用 axios 更加方便
+function sendAjax(url){
+	return new Promise((resolve,reject)=>{
+		// 1、创建对象
+		const x = new XMLHttpRequest();
+		// 2、初始化
+		x.open("GET",url);
+		// 3、发送
+		x.send();
+		// 4、事件绑定
+		x.onreadystatechange = function(){
+			if(x.readyState == 4){
+				if(x.status>=200 && x.status<=299){
+					// 成功
+					resolve(x.response);
+				}else{
+					// 失败
+					reject(x.status);
+				}
+			}
+		}
+	});
+}
+
+async function main(){
+	let result = await sendAjax("https://api.apiopen.top/getJoke");
+	console.log(result);
+}
+
+main();
+```
+
+<br>
+
+## ES8 对象方法扩展
+
+1. Object.keys()：获取对象所有的键
+
+```javascript
+const student = {
+    name: 'xxx',
+    age: 20,
+    sex: '男'
+}
+Object.keys(student);
+// output: ['name', 'age', 'sex']
+```
+
+2. Object.values()：获取对象所有的值
+
+```javascript
+Object.values(student);
+// output: ['xxx', 20, '男']
+```
+
+3. Object.entries()：返回给定对象自身可遍历属性 [key,value] 的数组
+
+```javascript
+Object.entries(student);
+// output: [ ['name', 'xxx'], ['age', 20], ['sex', '男'] ]
+```
+
+可以很方便的创建 map
+
+```javascript
+const m = new Map(Object.entries(student));
+```
+
+4.  Object.getOwnPropertyDescriptors()：返回指定对象所有自身属性的描述对象
+
+```javascript
+// 返回指定对象所有自身属性的描述对象
+console.log(Object.getOwnPropertyDescriptors(student));
+// 参考内容：
+const obj = Object.create(null,{
+	name : {
+		// 设置值
+		value : "訾博",
+		// 属性特性
+		writable : true,
+		configuration : true,
+		enumerable : true
+	}
+});
+```
+
+该方法具体怎么用不太了解
+
+<br>
+
+<br>
+
+# ES9
+
+## 扩展运算符与 rest
+
+Rest 参数与 spread 扩展运算符在 ES6 中已经引入，不过 ES6 中只针对于数组，在 ES9 中为对象提供了 像数组一样的 rest 参数和扩展运算符
+
+```javascript
+//rest 参数
+function connect({ host, port, ...user}){
+    console.log(host);
+	console.log(port);
+	console.log(user);
+}
+
+connect({
+	host: '127.0.0.1',
+	port: 3306,
+	username: 'root',
+	password: 'root',
+	type: 'master'
+});
+
+// 对象合并
+const skillOne = {
+	q: '天音波'
+}
+const skillTwo = {
+	w: '金钟罩'
+}
+const skillThree = {
+	e: '天雷破'
+}
+const skillFour = {
+	r: '猛龙摆尾'
+}
+const mangseng = {
+	...skillOne,
+	...skillTwo,
+	...skillThree,
+	...skillFour
+};
+console.log(mangseng)
+```
+
+<br>
+
+## 正则扩展
+
+ES9 允许命名捕获组使用符号『?』,这样获取捕获结果可读性更强
+
+```javascript
+// 正则扩展：命名捕获分组
+// 声明一个字符串
+let str = '<a href="http://www.baidu.com">超链接</a>';
+// 需求：提取url和标签内文本
+// 之前的写法
+const reg = /<a href="(.*)">(.*)<\/a>/;
+// 执行
+const result = reg.exec(str);
+console.log(result);
+// 结果是一个数组，第一个元素是所匹配的所有字符串
+// 第二个元素是第一个(.*)匹配到的字符串
+// 第三个元素是第二个(.*)匹配到的字符串
+// 我们将此称之为捕获
+console.log(result[1]);
+console.log(result[2]);
+// 命名捕获分组
+const reg1 = /<a href="(?<url>.*)">(?<text>.*)<\/a>/;
+const result1 = reg1.exec(str);
+console.log(result1);
+// 这里的结果多了一个groups
+// groups:
+// text:"超链接"
+// url:"http://www.baidu.com"
+console.log(result1.groups.url);
+console.log(result1.groups.text);
+```
+
+<br>
+
+ES9 支持反向断言，通过对匹配结果前面的内容进行判断，对匹配进行筛选
+
+```javascript
+// 正则扩展：反向断言
+// 字符串
+let str = "JS5201314你知道么555啦啦啦";
+// 需求：我们只想匹配到555
+// 正向断言
+const reg = /\d+(?=啦)/; // 前面是数字后面是啦
+const result = reg.exec(str);
+console.log(result);
+// 反向断言
+const reg1 = /(?<=么)\d+/; // 后面是数字前面是么
+const result1 = reg.exec(str);
+console.log(result1);
+```
+
+<br>
+
+dotAll 模式，正则表达式中点.匹配除回车外的任何单字符，标记『s』改变这种行为，允许行终止符出现
+
+```javascript
+// 正则扩展：dotAll 模式
+// dot就是. 元字符，表示除换行符之外的任意单个字符
+let str = `
+	<ul>
+		<li>
+			<a>肖申克的救赎</a>
+			<p>上映日期: 1994-09-10</p>
+		</li>
+		<li>
+            <a>阿甘正传</a>
+            <p>上映日期: 1994-07-06</p>
+		</li>
+	</ul>
+`;
+// 需求：我们想要将其中的电影名称和对应上映时间提取出来，存到对象
+// 之前的写法
+// const reg = /<li>\s+<a>(.*?)<\/a>\s+<p>(.*?)<\/p>/;
+// dotAll 模式
+const reg = /<li>.*?<a>(.*?)<\/a>.*?<p>(.*?)<\/p>/gs;
+// const result = reg.exec(str);
+// console.log(result);
+let result;
+let data = [];
+while(result = reg.exec(str)){
+	console.log(result);
+	data.push({title:result[1],time:result[2]});
+}
+console.log(data);
+```
+
