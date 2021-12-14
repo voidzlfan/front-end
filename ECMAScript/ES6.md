@@ -919,7 +919,7 @@ function OnePlus(brand, price, color, size){
     this.size = size;
 }
 // 设置子类构造函数的原型
-OnePlus.prototype. = new Phone();
+OnePlus.prototype = new Phone();
 OnePlus.prototype.constructor = OnePlus;
 
 // 声明子类方法
