@@ -249,9 +249,9 @@ notSure = 'hello';
 
 ### never
 
-`never` 类型表示的是那些永不存在的值的类型。 例如， `never` 类型是那些总是会抛出异常或根本就不会有返回值的函数表达式或箭头函数表达式的返回值类型；变量也可能是 `never `类型，当它们被永不为真的类型保护所约束时。
+`never` 类型表示的是那些永不存在的值的类型。 例如， `never` 类型是那些总是会抛出异常或根本就不会有返回值的函数表达式或箭头函数表达式的返回值类型；变量也可能是 `never ` 类型，当它们被永不为真的类型保护所约束时。
 
-`never` 类型是任何类型的子类型，也可以赋值给任何类型；然而，*没有*类型是 `never `的子类型或可以赋值给 `never` 类型（除了 `never` 本身之外）。 即使 `any` 也不可以赋值给 `never`。
+`never` 类型是任何类型的子类型，也可以赋值给任何类型；然而，*没有*类型是 `never ` 的子类型或可以赋值给 `never` 类型（除了 `never` 本身之外）。 即使 `any` 也不可以赋值给 `never`。
 
 下面是一些返回 `never` 类型的函数：
 
@@ -324,7 +324,7 @@ let temp: myType = 1;
 
 <br>
 
-## 编译选项
+## TS 编译选项
 
 自动编译文件，编译文件时，使用 -w 指令后，TS编译器会自动监视文件的变化，并在文件发生变化时对文件进行重新编译
 
@@ -352,12 +352,12 @@ tsconfig.json
     
     "include": ["./src/**/*"],
     
-    // exclude 定义需要排除在外的目录
+    // exclude，定义需要排除在外的目录
     // 默认值：["node_modules", "bower_components", "jspm_packages"]
     // 一般可以不设置改选项
     "exclude": ["./src/hello/**/*"],
     
-    // 定义被继承的配置文件，
+    // extend，定义被继承的配置文件，少用
     "extend": "./configs/base",
     
     // 指定被编译文件的列表，只有需要编译的文件少时才会用到
@@ -373,7 +373,7 @@ tsconfig.json
         "tsc.ts"
   	],
     
-    // 编译器选项是配置文件中非常重要也比较复杂的配置选项
+    // 编译器选项是配置文件中非常重要也比较复杂的配置选项！！
     "compilerOptions": {
         // target，设置ts代码编译的目标版本
         // 可选值：es3（默认）、es5、es6/es2015、es7/es2016、
@@ -463,7 +463,7 @@ module.exports = {
         path: path.resolve(__dirname, "dist"),
         filename: "bundle.js",
         environment: {
-            arrowFunction: false // 关闭webpack的箭头函数，可选
+            arrowFunction: false // 关闭 webpack 的箭头函数，可选
         },
         clean: true // 每次构建打包清除目标位置之前的所有文件
     },
@@ -492,12 +492,10 @@ module.exports = {
     },
     
     plugins: [						// 引入插件
-        new CleanWebpackPlugin(),
         new HtmlWebpackPlugin({
             title:'TS测试'
         }),
     ]
-    
 }
 ```
 
@@ -531,7 +529,7 @@ module.exports = {
 
 ## Babel
 
-经过一系列的配置，使得 TS 和 webpack 已经结合到了一起，除了webpack，开发中还经常需要结合babel来对代码进行转换以使其可以兼容到更多的浏览器，在上述步骤的基础上，通过以下步骤再将babel引入到项目中
+经过一系列的配置，使得 TS 和 webpack 已经结合到了一起，除了 webpack，开发中还经常需要结合 babel 来对代码进行转换以使其可以兼容到更多的浏览器，在上述步骤的基础上，通过以下步骤再将 babel 引入到项目中
 
 1. 安装依赖包
 
@@ -580,5 +578,390 @@ module: {
 ...略...
 ```
 
-如此一来，使用ts编译后的文件将会再次被babel处理，使得代码可以在大部分浏览器中直接使用，可以在配置选项的targets中指定要兼容的浏览器版本。
+webpack module 处理规则是从后往前的，上述配置的意思是先将 ts 代码交由 ts-loader 处理成 js 代码后，再由 babel-loader 处理生成可以兼容更多浏览器的代码。
 
+如此一来，使用 ts 编译后的文件将会再次被 babel 处理，使得代码可以在大部分浏览器中直接使用，可以在配置选项的 targets 中指定要兼容的浏览器版本。
+
+<br>
+
+## 类-面向对象
+
+### 简介
+
+例子，类在 ts 中表现如下，十分类似 Java
+
+```typescript
+class Person{
+    name: string;
+    age: number;
+
+    constructor(name: string, age: number){
+        this.name = name;
+        this.age = age;
+    }
+
+    sayHello(){
+        console.log(`大家好，我是${this.name}`);
+    }
+}
+
+const p = new Person('孙悟空', 18);
+p.sayHello();
+```
+
+<br>
+
+### 继承
+
+基于类的程序设计中一种最基本的模式是允许使用继承来扩展现有的类
+
+看下面的例子：
+
+```typescript
+class Animal {
+    move(distanceInMeters: number = 0) {
+        console.log(`Animal moved ${distanceInMeters}m.`);
+    }
+}
+
+class Dog extends Animal {
+    bark() {
+        console.log('Woof! Woof!');
+    }
+}
+
+const dog = new Dog();
+dog.bark();
+dog.move(10);
+dog.bark();
+```
+
+这个例子展示了最基本的继承，Dog 是一个派生类，它派生自 Animal 基类，通过 `extends` 关键字。
+
+Dog 继承了 Animal 的功能，因此 Dog 实例能够使用 bark() 和 move() 方法
+
+继承类似 Java
+
+<br>
+
+### 公共，私有与受保护的修饰符
+
+**默认为 `public`**
+
+你也可以明确的将一个成员标记成 `public`。 我们可以用下面的方式来重写上面的 `Animal` 类：
+
+```typescript
+class Animal {
+    public name: string;
+    public constructor(theName: string) { this.name = theName; }
+    public move(distanceInMeters: number) {
+        console.log(`${this.name} moved ${distanceInMeters}m.`);
+    }
+}
+```
+
+<br>
+
+**理解 `private`**
+
+当成员被标记成 `private`时，它就不能在声明它的类的外部访问。比如：
+
+```typescript
+class Animal {
+    private name: string;
+    constructor(theName: string) { this.name = theName; }
+}
+
+new Animal("Cat").name; // 错误: 'name' 是私有的.
+```
+
+<br>
+
+**理解 `protected`**
+
+`protected` 修饰符与 `private` 修饰符的行为很相似，但有一点不同， `protected` 成员在派生类中仍然可以访问。
+
+```typescript
+class Person {
+    protected name: string;
+    constructor(name: string) { this.name = name; }
+}
+
+class Employee extends Person {
+    private department: string;
+
+    constructor(name: string, department: string) {
+        super(name);
+        this.department = department;
+    }
+
+    public getElevatorPitch() {
+        return `Hello, my name is ${this.name} and I work in ${this.department}.`;
+    }
+}
+
+let howard = new Employee("Howard", "Sales");
+console.log(howard.getElevatorPitch());
+console.log(howard.name); // 错误
+```
+
+注意，我们不能在 `Person` 类外使用 `name`，但是我们仍然可以通过  `Employee` 类的实例方法访问，因为 `Employee` 是由 `Person` 派生而来的。
+
+构造函数也可以被标记成 `protected`。 这意味着这个类不能在包含它的类外被实例化，但是能被继承
+
+```typescript
+class Person {
+    protected name: string;
+    protected constructor(theName: string) { this.name = theName; }
+}
+
+// Employee 能够继承 Person
+class Employee extends Person {
+    private department: string;
+
+    constructor(name: string, department: string) {
+        super(name);
+        this.department = department;
+    }
+
+    public getElevatorPitch() {
+        return `Hello, my name is ${this.name} and I work in ${this.department}.`;
+    }
+}
+
+let howard = new Employee("Howard", "Sales");
+let john = new Person("John"); // 错误: 'Person' 的构造函数是被保护的.
+```
+
+<br>
+
+### readonly 修饰符
+
+你可以使用 `readonly` 关键字将属性设置为只读的。 只读属性必须在声明时或构造函数里被初始化。
+
+```typescript
+class Octopus {
+    readonly name: string;
+    readonly numberOfLegs: number = 8;
+    constructor (theName: string) {
+        this.name = theName;
+    }
+}
+let dad = new Octopus("Man with the 8 strong legs");
+dad.name = "Man with the 3-piece suit"; // 错误! name 是只读的.
+```
+
+此外，`readonly` 也可以写在参数前面，让我们方便的在一个地方创建并初始化一个成员。例如省略了上述 name 属性定义
+
+```typescript
+class Octopus {
+    readonly numberOfLegs: number = 8;
+    constructor(readonly name: string) {
+    }
+}
+```
+
+在构造函数里使用 `readonly name: string` 参数来创建和初始化 `name` 成员。 我们把声明和赋值合并至一处。
+
+<br>
+
+### 存取器
+
+TypeScript支持通过 getters / setters 来截取对对象成员的访问。 它能帮助你有效的控制对对象成员的访问
+
+```typescript
+let passcode = "secret passcode";
+
+class Employee {
+    private _fullName: string;
+
+    get fullName(): string {
+        return this._fullName;
+    }
+
+    set fullName(newName: string) {
+        if (passcode && passcode == "secret passcode") {
+            this._fullName = newName;
+        }
+        else {
+            console.log("Error: Unauthorized update of employee!");
+        }
+    }
+}
+
+let employee = new Employee();
+employee.fullName = "Bob Smith";
+if (employee.fullName) {
+    alert(employee.fullName);
+}
+```
+
+对于存取器有下面几点需要注意的：
+
+> 首先，存取器要求你将编译器设置为输出 ECMAScript 5 或更高。 不支持降级到 ECMAScript 3。 其次，只带有 `get` 不带有 `set` 的存取器自动被推断为 `readonly`。这在从代码生成 `.d.ts` 文件时是有帮助的，因为利用这个属性的用户会看到不允许够改变它的值。
+
+<br>
+
+### 静态属性
+
+静态属性（方法），也称为类属性。使用静态属性无需创建实例，通过类即可直接使用
+
+静态属性（方法）使用static开头
+
+```typescript
+class Tools{
+    static PI = 3.1415926;
+    
+    static sum(num1: number, num2: number){
+        return num1 + num2
+    }
+}
+
+console.log(Tools.PI);
+console.log(Tools.sum(123, 456));
+```
+
+<br>
+
+### 抽象类
+
+抽象类做为其它派生类的基类使用。 它们一般不会直接被实例化。 不同于接口，抽象类可以包含成员的实现细节。
+
+`abstract` 关键字是用于定义抽象类和在抽象类内部定义抽象方法
+
+```typescript
+abstract class Animal{
+    abstract run(): void;
+    bark(){
+        console.log('动物在叫~');
+    }
+}
+
+class Dog extends Animals{
+    run(){
+        console.log('狗在跑~');
+    }
+}
+```
+
+<br>
+
+### 接口
+
+接口的作用类似于抽象类，不同点在于接口中的所有方法和属性都是没有实值的，换句话说接口中的所有方法都是抽象方法。接口主要负责定义一个类的结构，接口可以去限制一个对象的接口，对象只有包含接口中定义的所有属性和方法时才能匹配接口。同时，可以让一个类去实现接口，实现接口时类中要保护接口中的所有属性
+
+```typescript
+interface Person{
+    name: string;
+    sayHello(): void;
+}
+
+class Student implements Person{
+    constructor(public name: string) {
+    }
+
+    sayHello() {
+        console.log('大家好，我是'+this.name);
+    }
+}
+```
+
+接口描述了类的公共部分，而不是公共和私有两部分。 它不会帮你检查类是否具有某些私有成员。
+
+<br>
+
+**函数类型**
+
+为了使用接口表示函数类型，我们需要给接口定义一个调用签名。 它就像是一个只有参数列表和返回值类型的函数定义。参数列表里的每个参数都需要名字和类型。
+
+```typescript
+interface SearchFunc {
+  (source: string, subString: string): boolean;
+}
+```
+
+这样定义后，我们可以像使用其它接口一样使用这个函数类型的接口。 下例展示了如何创建一个函数类型的变量，并将一个同类型的函数赋值给这个变量
+
+```typescript
+let mySearch: SearchFunc;
+mySearch = function(source: string, subString: string) {
+  let result = source.search(subString);
+  return result > -1;
+}
+```
+
+<br>
+
+### 泛型
+
+定义一个函数或类时，有些情况下无法确定其中要使用的具体类型（返回值、参数、属性的类型不能确定），此时泛型便能够发挥作用。
+
+例子
+
+```typescript
+function test(arg: any): any{
+	return arg;
+}
+```
+
+上例中，test 函数有一个参数类型不确定，但是能确定的时其返回值的类型和参数的类型是相同的，由于类型不确定所以参数和返回值均使用了 any，但是很明显这样做是不合适的，首先使用 any 会关闭 TS 的类型检查，其次这样设置也不能体现出参数和返回值是相同的类型
+
+使用泛型
+
+```typescript
+function test<T>(arg: T): T{
+	return arg;
+}
+```
+
+这里的 `<T>` 就是泛型，T 是我们给这个类型起的名字（不一定非叫 T），设置泛型后即可在函数中使用 T 来表示该类型。所以泛型其实很好理解，就表示某个类型
+
+如何使用该函数
+
+方式一：直接使用，传递参数自动类型推断
+
+```typescript
+test(10);
+```
+
+方式二：指定类型
+
+```typescript
+test<number>(10);
+```
+
+同时指定多个泛型
+
+```typescript
+function test<T, K>(a: T, b: K): K{
+    return b;
+}
+
+test<number, string>(10, "hello");
+```
+
+类中使用泛型
+
+```typescript
+class MyClass<T>{
+    prop: T;
+
+    constructor(prop: T){
+        this.prop = prop;
+    }
+}
+```
+
+除此之外，也可以像 Java 那样对泛型的范围进行约束
+
+```typescript
+interface MyInter{
+    length: number;
+}
+
+function test<T extends MyInter>(arg: T): number{
+    return arg.length;
+}
+```
+
+使用 `T extends MyInter` 表示泛型 T 必须是 MyInter 的子类，不一定非要使用接口类和抽象类同样适用。
