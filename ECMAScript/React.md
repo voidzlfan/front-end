@@ -1207,4 +1207,260 @@ this.prosp.history.go()
 2. public / index.html 中 引入样式时不写 ./ 写 %PUBLIC_URL% （常用）
 3. 改为使用 HashRouter，这样浏览器认为地址栏后面的资源不是后端资源
 
+<br>
+
+## redux
+
+### 简介
+
+Redux 是 JavaScript 状态容器，提供可预测化的状态管理。redux 经常和 react 搭配使用，用以解决 react 组件多且状态难以维护、组件间通信困难的痛点，你可以将项目一些公用的、常用的状态存储在 redux 的仓库 `store` 里，并在需要使用时通过 `connect` 高阶函数封装你的组件，就可以在组件中用 props 获取、操作这些状态。只不过与 react 常规操作 `setState` 稍稍不同，组件不能直接更改状态，需要发送一个通知 `action`，告诉仓库 store，说我想改变状态，仓库收到这个通知后，并不直接修改状态，而是将它收到的通知委托给一个处理人去进行处理，这个处理人就是 `reducer`，处理人处理完毕后，返回一个新的状态给仓库让它改变状态。
+<br>
+
+### 快速使用
+
+为了更好使用 redux，react 专门有一个库来与 redux 联合工作，这就是 react-redux
+
+下面通过一个官网上点击 +1 的例子来演示使用 redux ，首先编写Count.js
+
+```react
+import React, { Component } from "react";
+
+class Count extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      count: 0,
+    };
+  }
+  
+  add = () => {
+      this.setState({
+          count: this.state.count + 1
+      })
+  }
+
+  render() {
+    return (
+      <div>
+        <p>你点击了 {this.state.count} 次</p>
+        <button onClick={this.add}>点我+1</button>
+      </div>
+    );
+  }
+}
+
+export default Count;
+```
+
+现在要将状态 count 保存在 redux 仓库里，就必须创建一个 redux 仓库，
+前已说到，`store` 仓库不直接处理通知，所以创建仓库的同时，还要指定处理通知的人 `reducer`。
+
+store.js
+
+```react
+import { createStore} from 'redux'
+import countReducer from './countReducer'
+
+export default createStore(countReducer);
+```
+
+countReducer.js
+
+```react
+const initCount = 10;
+export default (preState = initCount,action) => {
+    const { type } = action;
+    switch(type){
+        case 'add':
+            return preState + 1;
+        default:
+            return preState;
+    }
+} 
+```
+
+可以看到，处理人 `reducer` 默认给 count 赋了一个默认值 10，传给了 store 仓库，
+函数体里的 switch 暂且不用管，目前仓库里只有一个值，state=10。
+
+现在仓库和处理人都有了，Count 组件该如何使用这个托管的状态 count 呢？
+在 redux 中传递保存的状态，主要是通过 `Provider` 组件 `store` 属性传递整个 store，
+在子组件使用 `connect` 封装子组件本身就可以在 props 中接收到仓库的状态了。
+
+所以我们对项目入口文件 index.js 和组件 count.js 修改
+index.js
+
+```react
+import React from "react";
+import ReactDOM from "react-dom";
+import { Provider } from "react-redux";
+import store from "./store";
+import Count from './count'
+
+ReactDOM.render(
+  <Provider store={store}>
+  	<Count/>
+  </Provider>,
+  document.getElementById("root")
+);
+```
+
+count.js
+
+```react
+import React, { Component } from "react";
+import { connect } from 'react-redux'
+
+class Count extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
+
+  add = () => {}
+
+  render() {
+    return (
+      <div>
+        <p>你点击了 {this.props.count} 次</p>
+        <button onClick={this.add}>点我+1</button>
+      </div>
+    );
+  }
+}
+
+function mapStateToProps(state){
+    return { count: state }
+}
+
+export default connect(mapStateToProps,null)(Count);
+```
+
+如此一来，Count 组件就接收到了 `store` 存储的状态。
+
+`connect` 前两个参数十分重要，第一个参数是 `mapStateToProps`，第二个是 `mapDispatchToProps`，这两个参数均为函数，返回值均为一个对象，所以也可以写成下面的形式。
+
+```react
+export default connect({},{})(Count);
+```
+
+这两个函数的意思很容易猜出，map 意思是映射，第一个参数 mapStateToProps 就是：映射状态给 props，第二个参数就是：映射 Dispatch 给 props，这个 Dispatch 下面会说到。
+上面的代码就是给 Count 组件映射仓库保存的状态值，并命名为 count，通过 this.props.count 使用。
+
+<br>
+
+**必须要强调的一点是，`connect` 高阶函数是给 `store` 调用的，当它在调用时，会给默认给第一个参数 mapStateToProps 函数传递总状态 state，我这里的例子太简单只有一个值，实际项目往往是一个对象，要用到解构；默认给第二个参数 mapDispatchToProps 函数传递发送通知的方法 `dispatch`，所以我们编写这两个函数的时候会带上参数。**
+
+经过上面的流程，我们已经知道如何获取到 store 的状态了，
+那么要改变状态，使得 count +1 该如何实现？
+
+在 redux 中，改变状态要发送通知给 store，通知就是 `action`，通知的格式形如：
+
+[Flux标准action](https://github.com/redux-utilities/flux-standard-action)
+
+```react
+{
+	type: 'add',
+	data: data
+}
+```
+
+新建一个action文件用以创建action对象，
+
+```react
+export const createAddAction = () => ({type: 'add'});
+```
+
+有了这个对象，就可以通过 `dispatch` 发送通知了，继续修改count.js
+count.js
+
+```react
+import React, { Component } from "react";
+import { connect } from 'react-redux'
+import { createAddAction } from './action'
+
+class Count extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
+
+  add = () => {
+      this.props.increment();
+  }
+
+  render() {
+    return (
+      <div>
+        <p>你点击了 {this.props.count} 次</p>
+        <button onClick={this.add}>点我+1</button>
+      </div>
+    );
+  }
+}
+
+function mapStateToProps(state){
+    return { count: state }
+}
+
+function mapDispatchToProps(dispatch){
+    return {
+        increment: () => dispatch(createAddAction())
+    }
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(Count);
+```
+
+`mapDispatchToProps` 返回一个包含多个方法的对象，将要改变状态的意图发送给 `store`，`store` 再交由 `reducer` 进行处理，`reducer` 发现 `action` 的 type 是 add，于是匹配到 `reducer` 的第一个选项，将新的状态返回了。
+
+```react
+switch(type){
+   case 'add':
+       return preState + 1;
+   default:
+       return preState;
+}
+```
+
+另外，mapStateToProps 和 mapDispatchToProps 都有简写形式，mapDispatchToProps 在调用的时候会自动帮我们调用 `dispatch` 方法，所以它简写更简单
+
+```react
+connect(
+    state => ({count: state}),
+    {
+        increment: createAddAction,
+    }
+)(Count);
+```
+
+还可以触发对象的属性和值重名简写，但是不太推荐，可读性差了点
+
+<br>
+
+### 总结
+
+1. redux运行的大体流程就是这样，难点在于 `connect` 高阶函数的理解，我这里在思否看到一篇写的很好的文章：[React实践心得：react-redux 之 connect 方法详解](https://segmentfault.com/a/1190000015042646)，有兴趣可以去看看
+2. 在 redux 中，reducer 必须是一个纯函数，它接收两个参数，第一个参数为 store 的前一次状态，第二个参数是传递的 action 对象
+3. redux 还有其他很常用的 api，比如用于组合多个 reducer 的 `combineReducers`、用于增加中间件的 `applyMiddleware` 等等，还有用于创建 action，处理 action 的库 `redux-actions`，其中的方法能大大提高工作效率
+
+<br>
+
+### 拓展
+
+组合多个 reducer，并且添加中间件的 store.js 文件编写
+
+```react
+import { createStore,applyMiddleware,combineReducers } from 'redux'
+import countReducer from './reducer/count'
+import personReducer from './reducer/person'
+//引入redux-thunk，用于支持异步action
+import thunk from 'redux-thunk'
+
+const allReducer = combineReducers({
+    countReducer,
+    personReducer,
+})
+
+export default createStore(allReducer,applyMiddleware(thunk));
+```
 
