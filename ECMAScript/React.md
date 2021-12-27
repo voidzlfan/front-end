@@ -1445,9 +1445,9 @@ connect(
 
 <br>
 
-### 拓展
+### 组合 reducer
 
-组合多个 reducer，并且添加中间件的 store.js 文件编写
+组合多个 reducer，并且添加中间件， store.js 文件编写
 
 ```react
 import { createStore,applyMiddleware,combineReducers } from 'redux'
@@ -1464,3 +1464,335 @@ const allReducer = combineReducers({
 export default createStore(allReducer,applyMiddleware(thunk));
 ```
 
+<br>
+
+## 拓展
+
+### setState
+
+setState 更新是异步的，它可能要做合并操作，react 提供了更新状态后的回调函数，此外，还有另外一种更新状态的写法
+
+```react
+setState({
+    name: 'xx',
+},() => {
+    console.log('更新完成')
+})
+```
+
+另一种写法，第一种参数为函数
+
+```react
+setState((state, props) => {
+    return {name: state.name};
+},() => {
+    console.log('更新完成')
+})
+```
+
+使用原则
+
+1. 如果新状态不依赖于原状态 ===> 使用对象方式
+2. 如果新状态依赖于原状态 ===> 使用函数方式
+3. 如果需要在setState()执行后获取最新的状态数据，要在第二个 callback 函数中读取
+
+<br>
+
+### lazy 路由组件懒加载
+
+通过 React 的 lazy 函数配合 import() 函数动态加载路由组件 
+
+===> 路由组件代码会被分开打包
+
+用法，路由组件懒加载必须要用 `<Suspense>` 包裹
+
+```react
+import React, { Component, lazy } from 'react'
+
+import Home from lazy(() => import('./Home'))
+
+
+const App = (
+<Suspense fallback={<h1>loading.....</h1>}>
+	<Switch>
+		<Route path="/xxx" component={Xxxx}/>
+		<Redirect to="/login"/>
+	</Switch>
+</Suspense>
+)
+
+
+```
+
+callback 回调会在慢网速情况下显示，通常可以自定义一个友好的组件
+
+<br>
+
+### hooks
+
+React Hook / Hooks是什么？
+
+* Hook 是 React 16.8.0 版本增加的新特性 / 新语法
+* 可以让你在**函数组件**中使用 state 以及其他的 React 特性
+
+常用的 hook
+
+```react
+import React, { useState, useEffect, useRef } from 'react';
+// or
+State Hook: React.useState()
+Effect Hook: React.useEffect()
+Ref Hook: React.useRef()
+```
+
+<br>
+
+**State Hook**
+
+State Hook 让函数组件也可以有 state 状态, 并进行状态数据的读写操作
+
+```react
+const [name, setName] = React.useState('zlfan')
+// useState()说明
+// 参数: 第一次初始化指定的值在内部作缓存
+// 返回值: 包含 2 个元素的数组, 第 1 个为内部当前状态值, 第 2 个为更新状态值的函数
+
+// 更新状态
+setState('fanzl')
+// 另一种写法，参数为函数, 接收原本的状态值, 返回新的状态值, 内部用其覆盖原来的状态值
+setState( value => newValue)
+```
+
+<br>
+
+**Effect Hook**
+
+Effect Hook 可以让你在函数组件中执行副作用操作（用于模拟类组件中的生命周期钩子）
+
+React中的副作用操作：
+
+* 发ajax请求数据获取
+* 设置订阅 / 启动定时器
+* 手动更改真实DOM
+
+```react
+useEffect(() => {
+    // 在此可以执行任何带副作用操作
+    return () => {// 在组件卸载前执行
+        // 在此做一些收尾工作, 比如清除定时器/取消订阅等
+    }
+}, [stateValue]) // 如果指定的是空数组 [], 回调函数只会在第一次 render() 后执行
+// []，不写默认监测所有的状态，如果要监测某个状态，可以写入这个数组
+```
+
+可以把 useEffect Hook 看做如下三个函数的组合
+
+`componentDidMount()`
+
+`componentDidUpdate()`
+
+`componentWillUnmount() `
+
+<br>
+
+Ref Hook
+
+Ref Hook 可以在函数组件中存储 / 查找组件内的标签或任意其它数据
+
+```react
+const refContainer = useRef()
+```
+
+保存标签对象，功能与 React.createRef() 一样
+
+<br>
+
+### fragment
+
+jsx 可以不用必须有一个真实的 DOM 根标签了
+
+```react
+<Fragment><Fragment>
+<></>
+```
+
+<br>
+
+### context
+
+一种组件间通信方式, 常用于【祖组件】与【后代组件】间通信
+
+```react
+import React, { Component } from 'react';
+import Home from './components/Home'
+
+// 创建Context容器对象
+const MyContent = React.createContext()
+
+class App extends Component {
+  render() {
+    // 渲染子组时，外面包裹xxxContext.Provider, 通过 value 属性给后代组件传递数据
+    return <MyContent.Provider value={1}>
+            <Home></Home>
+          </MyContent.Provider>;
+  }
+}
+
+export default App;
+```
+
+Home 组件读取 content
+
+```react
+this.props.content
+```
+
+上述的是类组件读取 content，也有函数组件的读取方式，Consumer
+
+```react
+<xxxContext.Consumer>
+	{
+        // value就是context中的 value数据
+		value => {
+            // 要显示的内容
+            return <span>{value}</span>
+        }
+	}
+</xxxContext.Consumer>
+```
+
+> 注意：在应用开发中一般不用 context, 一般都用它的封装 react 插件
+
+<br>
+
+### PureComponent
+
+以往的组件有一些效率问题：
+
+* 只要执行 setState()，即使不改变状态数据，组件也会重新 render()
+* 当前组件重新 render()，就会自动重新 render 子组件，纵使子组件没有用到父组件的任何数据
+
+**怎么样才算效率高**
+
+只有当组件的 state 或 props 数据发生改变时才重新 render()
+
+<br>
+
+解决方案
+
+1. **重写 shouldComponentUpdate() 方法**，比较新旧 state 或 props 数据, 如果有变化才返回 true, 如果没有返回 false
+
+   ```react
+   // lodash
+   shouldComponentUpdate(nextProps, nextState){
+       return !_.isEqual(nextProps, this.props) || !_.isEqual(nextState, this.state); 
+   }
+   ```
+
+   
+
+2. 使用 PureComponent，PureComponent重写了 shouldComponentUpdate()，只有 state 或 props 数据有变化才返回 true
+
+   ```react
+   import React, { PureComponent } from 'react';
+   ```
+
+   
+
+<br>
+
+> 注意: 
+> 		只是进行 state 和 props 数据的浅比较
+> 		不要直接修改 state 数据, 而是要产生新数据
+> 		项目中一般使用 PureComponent来优化，它是**浅比较**
+
+<br>
+
+### render props
+
+如何向组件内部动态传入带内容的结构（标签）? 或者说预留一个组件？
+
+* 使用 children props：通过组件标签体传入结构
+
+* 使用 render props：通过组件标签属性传入结构,而且可以携带数据，一般用 render 函数属性
+
+**children props**
+
+```react
+<A>
+  <B>xxxx</B>
+</A>
+// 因为两个组件嵌套是不能显示子组件的，所以需要 children
+// 在 A 中使用 children 渲染
+{this.props.children}
+```
+
+**render props**
+
+```react
+<A render={(data) => <B data={data}></B>}></A>
+A 组件: {this.props.render(内部 state 数据)}
+B 组件: 读取 A 组件传入的数据显示 {this.props.data} 
+```
+
+```react
+class Parent extends Component {
+    render() { 
+        return <div>
+            <A render={(name)=>{ return <B>{name}</B> }}></A>
+        </div>
+    }
+}
+ 
+class A extends Component {
+    state = {name: 'xxx'}
+    render() { 
+        const {name} = this.state;
+        return <div>{this.props.render(name)}</div>
+    }
+}
+ 
+class B extends Component {
+    render() { 
+        return <div>{this.props.name}</div>
+    }
+}
+```
+
+<br>
+
+### 错误边界
+
+错误边界（Error boundary）：用来捕获后代组件错误，渲染出备用页面
+
+react 中使用 `getDerivedStateFromError` 配合 `componentDidCatch` ，当组件发生错误时，展示一个友好界面
+
+```react
+// 标识子组件是否产生错误
+state = {
+    hasError: false
+}
+
+// 生命周期函数，一旦子组件报错，就会触发
+static getDerivedStateFromError(error) {
+    console.log(error);
+    // 在render之前触发
+    // 返回新的state
+    return {
+        hasError: true,
+    };
+}
+
+componentDidCatch(error, info) {
+    // 统计页面的错误。发送请求发送到后台去
+    console.log(error, info);
+}
+
+render(){
+    return <div>{this.state.hasError ? <h2>当前网络不稳定，请稍后再试</h2> : null}</div>
+}
+```
+
+> 只能捕获后代组件生命周期产生的错误，不能捕获自己组件产生的错误和其他组件在合成事件、定时器中产生的错误
+
+<br>
