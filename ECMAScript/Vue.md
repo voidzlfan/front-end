@@ -2528,3 +2528,454 @@ this.$store.commit('personAbout/ADD_PERSON',person)
 
 <br>
 
+# Vue Router
+
+## 基本使用
+
+安装
+
+```shell
+npm install vue-router
+```
+
+编写 router 配置项
+
+```js
+import VueRouter from 'vue-router'
+// 引入 Luyou 组件
+import About from '../components/About'
+import Home from '../components/Home'
+
+// 创建 router 实例对象，去管理一组一组的路由规则
+const router = new VueRouter({
+    routes:[
+        {
+            path:'/about',
+            component:About
+        },
+        {
+            path:'/home',
+            component:Home
+        }
+    ]
+})
+
+//暴露router
+export default router
+```
+
+`<router-link>` 路由跳转
+
+`<router-view>` 路由组件展示的位置
+
+```html
+<router-link active-class="active" to="/about">About</router-link>
+<router-link active-class="active" to="/home">Home</router-link>
+<router-view></router-view>
+```
+
+active-class：导航组件激活时的样式，自动添加 class 属性 active
+
+注意点：
+
+1. 路由组件通常存放在 pages 文件夹，一般组件通常存放在 components 文件夹
+2. 通过切换，“隐藏”了的路由组件，默认是被销毁掉的，需要的时候再去挂载
+3. 每个组件都有自己的 `route` 属性，里面存储着自己的路由信息
+4. 整个应用只有一个 router，可以通过组件的 `$router` 属性获取到
+
+<br>
+
+## 嵌套路由
+
+使用 children 配置多级路由：
+
+```js
+routes:[
+    {
+        path:'/about',
+        component:About,
+    },
+    {
+        path:'/home',
+        component:Home,
+        children:[ // 通过 children 配置子级路由
+            {
+                path:'news', // 此处一定不要写：/news
+                component:News
+            },
+            {
+                path:'message',// 此处一定不要写：/message
+                component:Message
+            }
+        ]
+    }
+]
+```
+
+配置之后，跳转路径要修改为
+
+```vue
+<router-link to="/home/news">News</router-link>
+```
+
+<br>
+
+## query 参数
+
+query 传递参数，将在地址栏上拼接
+
+```vue
+<!-- 跳转并携带 query 参数，to 的字符串写法 -->
+<router-link :to="/home/message/detail?id=666&title=你好">跳转</router-link>
+
+<!-- 跳转并携带 query 参数，to 的对象写法 -->
+<router-link 
+	:to="{
+			path:'/home/message/detail',
+			query:{
+				id:666,
+				title:'你好'
+			}
+	}"
+>跳转</router-link>
+```
+
+接收参数
+
+```js
+this.$route.query.id
+this.$route.query.title
+```
+
+<br>
+
+## 命名路由
+
+可以简化路由的跳转
+
+例子
+
+```js
+{
+    path: '/demo',
+    component: Demo,
+    children: [
+		{
+			path:'test',
+			component:Test,
+			children: [
+				{
+					name: 'hello' // 给路由命名
+					path: 'welcome',
+					component: Hello,
+				}
+			]
+		}
+	]
+}
+```
+
+简化跳转
+
+```vue
+<!-- 简化前，需要写完整的路径 -->
+<router-link to="/demo/test/welcome">跳转</router-link>
+
+<!-- 简化后，直接通过名字跳转 -->
+<router-link :to="{name: 'hello'}">跳转</router-link>
+
+<!--简化写法配合传递参数 -->
+<router-link
+	:to= "{
+          	name: 'hello',
+          	query: {
+          		id: 666,
+          		title: '你好'
+          	}
+	}"
+>跳转</router-link>
+```
+
+<br>
+
+## params 参数
+
+需要在路由配置文件中事先声明占位
+
+```js
+{
+    path:'/home',
+    component: '',
+    children: [
+        {
+            path:'news',
+            component:News
+        },
+        {
+            component:Message,
+            children:[
+                {
+                    name:'xiangqing',
+                    path:'detail/:id/:title', // 使用占位符声明接收 params 参数
+                    component:Detail
+                }
+            ]
+        }
+    ]
+}
+```
+
+传递 params 参数
+
+```vue
+<!-- 跳转并携带 params 参数，to 的字符串写法 -->
+<router-link :to="/home/message/detail/666/你好">跳转</router-link>
+
+<!-- 跳转并携带 params 参数，to 的对象写法 -->
+<router-link 
+   	:to="{
+   		name:'xiangqing',
+   		params:{
+   		   id:666,
+           title:'你好'
+   		}
+   	}"
+>跳转</router-link>
+```
+
+> 特别注意：路由携带 params 参数时，若使用 to 的对象写法，则不能使用 path 配置项，必须使用 name 配置！
+
+接收参数
+
+```js
+this.$route.params.id
+this.$route.params.title
+```
+
+<br>
+
+## 路由的 props 配置
+
+作用：让路由组件更方便的收到参数
+
+```js
+{
+	name: 'xiangqing',
+	path: 'detail/:id',
+	component: Detail,
+
+	// 第一种写法：props 值为对象，该对象中所有的 key-value 的组合最终都会通过 props 传给 Detail 组件
+	// props: {a:900}
+
+	// 第二种写法：props 值为布尔值，布尔值为 true，则把路由收到的所有 params 参数通过 props 传给 Detail 组件
+	// props: true
+	
+	// 第三种写法：props 值为函数，该函数返回的对象中每一组 key-value 都会通过 props 传给 Detail 组件
+	props(route){
+		return {
+			id:route.query.id,
+			title:route.query.title
+		}
+	}
+}
+```
+
+```js
+export default {
+    name: 'Detail',
+    props: ['id','title'], // 声明接收
+    computed: {
+        // id(){
+        // 	return this.$route.query.id
+        // },
+        // title(){
+        // 	return this.$route.query.title
+        // },
+    },
+    mounted() {
+        // console.log(this.$route)
+    },
+}
+```
+
+<br>
+
+## replace 属性
+
+作用：控制路由跳转时操作浏览器历史记录的模式
+
+浏览器的历史记录有两种写入方式：分别为 push 和 replace，push 追加历史记录，replace 是替换当前记录，路由跳转默认 push 模式
+
+开启 replace 模式
+
+```vue
+<router-link replace .......>News</router-link>
+```
+
+<br>
+
+## 编程式路由导航
+
+作用：不借助```<router-link> ```实现路由跳转，让路由跳转更加灵活
+
+```js
+this.$router.push({
+    name:'xiangqing',
+    params:{
+        id:xxx,
+        title:xxx
+    }
+})
+
+this.$router.replace({
+    name:'xiangqing',
+    params:{
+        id:xxx,
+        title:xxx
+    }
+})
+this.$router.forward() //前进
+this.$router.back() //后退
+this.$router.go() //可前进也可后退
+```
+
+<br>
+
+## 缓存路由
+
+让不展示的路由组件保持挂载，不被销毁，使用 `<keep-alive>`
+
+```vue
+<keep-alive include="News"> 
+	<router-view></router-view>
+</keep-alive>
+```
+
+include：字符串或正则表达式。只有名称匹配的组件会被缓存。不传默认缓存所有组件
+
+此时，将引出两个新生命周期钩子
+
+* `activated`：路由组件被激活时触发
+* `deactivated`：路由组件失活时触发
+
+<br>
+
+## 路由守卫
+
+作用：对路由进行权限控制
+
+分类：全局守卫、独享守卫、组件内守卫
+
+**全局路由**
+
+在路由配置文件中配置
+
+```js
+const router =  new VueRouter({
+    routes:[
+        // ..
+    ]
+})
+
+// 全局前置守卫：初始化时执行、每次路由切换前执行
+router.beforeEach((to,from,next)=>{
+    console.log('beforeEach',to,from)
+    if(to.meta.isAuth){ // 判断当前路由是否需要进行权限控制
+        if(localStorage.getItem('school') === 'atguigu'){ // 权限控制的具体规则
+            next() // 放行
+        }else{
+            alert('暂无权限查看')
+            // next({name:'guanyu'})
+        }
+    }else{
+        next() // 放行
+    }
+})
+
+// 全局后置守卫：初始化时执行、每次路由切换后执行
+router.afterEach((to,from)=>{
+    console.log('afterEach',to,from)
+    if(to.meta.title){ 
+        document.title = to.meta.title // 修改网页的 title
+    }else{
+        document.title = 'vue_test'
+    }
+})
+```
+
+- `to: Route`：即将要进入的目标 [路由对象](https://router.vuejs.org/zh/api/#路由对象)
+- `from: Route`：当前导航正要离开的路由
+- `next: Function`：一定要调用该方法来 **resolve** 这个钩子。执行效果依赖 `next` 方法的调用参数。
+  * **`next()`**: 进行管道中的下一个钩子。如果全部钩子执行完了，则导航的状态就是 **confirmed** (确认的)。
+  * **`next(false)`**: 中断当前的导航。如果浏览器的 URL 改变了 (可能是用户手动或者浏览器后退按钮)，那么 URL 地址会重置到 `from` 路由对应的地址。
+  * **`next('/')` 或者 `next({ path: '/' })`**: 跳转到一个不同的地址。当前的导航被中断，然后进行一个新的导航。你可以向 `next` 传递任意位置对象，且允许设置诸如 `replace: true`、`name: 'home'` 之类的选项以及任何用在 [`router-link` 的 `to` prop](https://router.vuejs.org/zh/api/#to) 或 [`router.push`](https://router.vuejs.org/zh/api/#router-push) 中的选项。
+  * **`next(error)`**: (2.4.0+) 如果传入 `next` 的参数是一个 `Error` 实例，则导航会被终止且该错误会被传递给 [`router.onError()`](https://router.vuejs.org/zh/api/#router-onerror) 注册过的回调。
+
+**确保 `next` 函数在任何给定的导航守卫中都被严格调用一次。它可以出现多于一次，但是只能在所有的逻辑路径都不重叠的情况下，否则钩子永远都不会被解析或报错**。
+
+<br>
+
+**路由独享守卫**
+
+你可以在路由配置上直接定义 `beforeEnter` 守卫：
+
+```js
+const router = new VueRouter({
+    routes: [
+        {
+            path: '/foo',
+            component: Foo,
+            beforeEnter: (to, from, next) => {
+                // ...
+            }
+        }
+    ]
+})
+```
+
+<br>
+
+**组件内的守卫**
+
+```js
+// 进入守卫：通过路由规则，进入该组件时被调用
+beforeRouteEnter (to, from, next) {
+    // 不！能！获取组件实例 `this`
+    // 因为当守卫执行前，组件实例还没被创建
+},
+// 离开守卫：通过路由规则，离开该组件时被调用
+beforeRouteLeave (to, from, next) {
+    // 可以访问组件实例 `this`
+}
+```
+
+<br>
+
+## 路由两种工作模式
+
+对于一个 url 来说，什么是 hash 值？—— # 及其后面的内容就是 hash 值。
+
+hash 值不会包含在 HTTP 请求中，即：hash 值不会带给服务器。
+
+hash 模式：
+
+* 地址中永远带着 # 号，不美观 
+* 若以后将地址通过第三方手机 app 分享，若 app 校验严格，则地址会被标记为不合法
+* 兼容性较好
+
+history 模式：
+
+* 地址干净，美观 
+* 兼容性和hash模式相比略差
+* 应用部署上线时需要后端人员支持，解决刷新页面服务端 404 的问题
+
+
+
+
+
+
+
+
+
+
+
