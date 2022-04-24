@@ -632,6 +632,8 @@ const vm = new Vue({
 
 不同的是带有 `v-show` 的元素始终会被渲染并保留在 DOM 中。`v-show` 只是简单地切换元素的 CSS property `display`。
 
+**`template` 只能与 `v-if` 配合使用！！！**
+
 
 
 **两者比较**
