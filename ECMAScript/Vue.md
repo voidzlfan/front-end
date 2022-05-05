@@ -1037,6 +1037,111 @@ new Vue({
 
 <br>
 
+## 过滤器
+
+Vue.js 允许你自定义过滤器，可被用于一些常见的文本格式化。过滤器可以用在两个地方：**双花括号插值和 `v-bind` 表达式** (后者从 2.1.0+ 开始支持)。过滤器应该被添加在 JavaScript 表达式的尾部，由”管道”符号指示：
+
+```html
+<div id="root">
+	<h3>
+    	现在是：{{ time | timeFormatter }}
+	</h3>
+</div>
+```
+
+```js
+// 局部定义过滤器
+new Vue({
+    el: '#root',
+    data: {
+        time: 1651760103160,
+    },
+    filter: {
+        timeFormatter(value, str="YYYY年MM月DD日 HH:mm:ss"){
+            // 需要自行引入 dayjs 库
+            return dayjs(value).format(str)
+        }
+    }
+})
+```
+
+```js
+// 全局定义过滤器
+Vue.filter('timeFormatter', function(value){})
+```
+
+
+
+<br>
+
+## 自定义指令
+
+在 Vue 中可以自定义指令，借助关键字 `directive` 定义指令
+
+例子，自定义指令，将一个值放大 10 倍
+
+```html
+<div id="root">
+    <h2>
+        <span v-big="n"></span>
+    </h2>
+    <button >点击+1</button>
+</div>
+```
+
+```js
+// 函数式写法
+new Vue({
+    el: '#root',
+    data: {
+        n: 1
+    },
+    // 第一个参数为元素的真实 DOM 节点，使用原生 js 操作
+    // 第二个参数为将要绑定的对象，属性包括指令名（name），指令绑定的值（value），指令绑定前的一个值（oldValue）
+    directive: {
+        big(element, binding){
+            element.innerText = binding.value * 10
+        }
+    }
+        
+})
+```
+
+> 特别注意，指令的执行时机是：当指令所在模板被重新解析时才会执行，也就是 data 中数据变化，引起模板变化时执行
+
+```js
+// 对象式写法，其中 bind 和 update 钩子组成了函数式写法
+new Vue({
+    el: '#root',
+    data: {
+        n: 1
+    },
+    directive: {
+        big: {
+            // 只调用一次，指令第一次绑定到元素时调用。在这里可以进行一次性的初始化设置。
+            bind(element, binding){
+                element.innerText = binding.value * 10
+            },
+            // 当 DOM 元素真正插入页面时的钩子（被绑定元素插入父节点时调用 ）
+            inserted(element, binding){
+                
+            },
+            // 所在组件的 VNode 更新时调用，但是可能发生在其子 VNode 更新之前。
+            update(element, binding){
+                element.innerText = binding.value * 10
+            }
+        }
+    }
+        
+})
+```
+
+指令名要求**短横线命名**，定义指令时，可使用 `'big-number'(el, value){}` 这种形式
+
+
+
+<br>
+
 ## 生命周期钩子
 
 **生命周期流程图**
