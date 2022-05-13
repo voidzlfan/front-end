@@ -1856,7 +1856,9 @@ new Vue({
                 console.log('hello')
             }
         },*/
-        this.$refs.ss.$on('sayHello')// $on 可接回调函数，注意 this 指向
+        mounted(){
+            this.$refs.ss.$on('sayHello')// $on 可接回调函数，注意 this 指向
+        }
     }
 </script>
 ```
@@ -1900,6 +1902,20 @@ new Vue({
 ```
 
 此外在组件销毁时，会自动销毁组件绑定的所有事件
+
+<br>
+
+特别说明，自定义事件用在**组件**身上，如果要在组件上增加原生事件（click等），必须要加 `.native`，这样 Vue 就会在组件最外层标签增加原生事件，否则将 Vue 将视为自定义事件
+
+```vue
+<template>
+	<div>
+        <Student ref='ss' @click.native="xxxx"></Student>
+    </div>
+</template>
+```
+
+
 
 <br>
 
@@ -2237,9 +2253,16 @@ module.exports = {
     	<slot>插槽默认内容...</slot>
     </div>
 </template>
+
+<script>
+	export default {
+		name:'Category'
+	}
+</script>
+
 ```
 
-当组件渲染的时候，`<slot></slot>` 将会被替换为“html 结构 1”。如果 `<Category>` 的 `template` 中**没有**包含一个 `<slot>` 元素，则该组件起始标签和结束标签之间的任何内容都会被抛弃。
+当组件渲染的时候，`<slot></slot>` 将会被替换为“html 结构 1”。如果 `<Category>` 的 `template` 中**没有**包含一个 `<slot>` 元素，则该组件起始标签和结束标签之间的任何内容都会被抛弃，插槽默认内容就会显示出来。
 
 <br>
 
