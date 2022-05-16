@@ -2983,10 +2983,50 @@ this.$router.go() //可前进也可后退
 
 include：字符串或正则表达式。只有名称匹配的组件会被缓存。不传默认缓存所有组件
 
+exclude：与 include 相反，名称匹配的不会被缓存
+
+二者都可以用逗号分隔字符串、正则表达式或一个数组来表示
+
+缓存多个组件写法：
+
+```vue
+<keep-alive include="News,Test"> 
+	<router-view></router-view>
+</keep-alive>
+
+<keep-alive :include="['News','Test']"> 
+	<router-view></router-view>
+</keep-alive>
+
+<keep-alive :include="/News|Test/"> 
+	<router-view></router-view>
+</keep-alive>
+```
+
 此时，将引出两个新生命周期钩子
 
 * `activated`：路由组件被激活时触发
 * `deactivated`：路由组件失活时触发
+
+```vue
+<script>
+export default {
+    name: 'News',
+    data(){
+        return {}
+    },
+    activated(){
+        console.log('路由组件被激活了')
+    },
+    deactivated(){
+        console.log('路由组件失活了')
+    },
+}
+
+</script>
+```
+
+
 
 <br>
 
@@ -3000,9 +3040,20 @@ include：字符串或正则表达式。只有名称匹配的组件会被缓存�
 
 在路由配置文件中配置
 
+一般我们在 route 的 `meta` 元数据属性中配置我们自定义的一些数据，通常有进行权限校验的属性，isAuth
+
 ```js
 const router =  new VueRouter({
     routes:[
+        {
+            name: 'News',
+            component: News,
+            meta: {
+                isAuth: true,
+                title: '标题'
+            },
+            children: []
+        }
         // ..
     ]
 })
@@ -3098,6 +3149,43 @@ history 模式：
 * 地址干净，美观 
 * 兼容性和hash模式相比略差
 * 应用部署上线时需要后端人员支持，解决刷新页面服务端 404 的问题
+
+切换工作模式
+
+```js
+const router = new VueRouter({
+    mode: "history" // hash
+})
+```
+
+
+
+<br>
+
+例子：history 模式，用 node 做后端，解决浏览器刷新 404 报错
+
+```js
+const express = require('express')
+const history = require('connect-history-api-fallback')
+
+const app = express()
+app.use(history)
+
+app.get('/person',(req,res) => {
+    res.send({
+        name: 'xxxx',
+        age: 18
+    })
+})
+
+app.listen(5005,err => {
+    if(!err) console.log('服务器localhost:5005启动了')
+})
+```
+
+
+
+
 
 
 
