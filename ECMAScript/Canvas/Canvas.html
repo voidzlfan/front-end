@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>canvas</title>
+  </head>
+
+  <body>
+    <canvas id="canvas" width="300" height="300"></canvas>
+    <script>
+      const canvas = document.getElementById("canvas");
+      const ctx = canvas.getContext("2d");
+
+      ctx.fillStyle = "blue";
+      ctx.save();
+
+      ctx.fillStyle = "green";
+      ctx.save();
+
+      ctx.restore();
+      ctx.fillRect(50, 50, 200, 200);
+
+      ctx.restore();
+      ctx.fillRect(70, 70, 200, 200);
+
+      // const img = document.getElementById("img");
+      // img.onload = function () {
+      //   ctx.drawImage(img, 10, 10, 100, 100, 50, 50, 100, 100)
+      // };
+
+      // ctx.font = "30px serif";
+      // ctx.fillText("hello canvas", 50, 50);
+
+      // ctx.strokeText("hello canvas", 50, 100);
+
+      // ctx.shadowOffsetX = 5;
+      // ctx.shadowOffsetY = 5;
+      // ctx.shadowBlur = 5;
+      // ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
+      // ctx.fillStyle = "pink";
+      // ctx.fillRect(50, 50, 200, 200);
+
+      // createLinearGradient 方法接受 4 个参数，表示渐变的起点 (x1,y1) 与终点 (x2,y2)。
+      // const linear = ctx.createLinearGradient(30, 30, 30, 200);
+      // // 第一个参数指定渐变颜色所处的位置 0-1，
+      // linear.addColorStop(0, "blue");
+      // linear.addColorStop(1, "green");
+
+      // // 方法接受 6 个参数，前三个定义一个以 (x1,y1) 为原点，半径为 r1 的圆，
+      // // 后三个参数则定义另一个以 (x2,y2) 为原点，半径为 r2 的圆。
+      // const radial = ctx.createRadialGradient(50, 50, 25, 200, 200, 25);
+      // radial.addColorStop(0, "red");
+      // radial.addColorStop(1, "yellow");
+
+      // ctx.fillStyle = linear;
+      // ctx.fillRect(30, 30, 200, 200);
+
+      // ctx.fillStyle = radial;
+      // ctx.fillRect(50, 50, 200, 200);
+
+      // ctx.beginPath()
+      // ctx.strokeStyle = "#ff0"
+      // ctx.moveTo(50, 50)
+      // ctx.lineTo(250, 50)
+      // ctx.lineTo(250, 250)
+      // ctx.lineTo(50, 250)
+      // ctx.lineTo(50, 50)
+      // ctx.stroke()
+
+      // var gradient = ctx.createRadialGradient(30, 30, 100,200, 200,100)
+      // gradient.addColorStop(0, "white");
+      // gradient.addColorStop(1, "green");
+      // ctx.fillStyle = gradient
+      // ctx.setLineDash([5, 5]);
+      // ctx.lineDashOffset = 33;
+      // ctx.strokeRect(10,10, 100, 100);
+      // ctx.fillRect(30,30,200,200)
+
+      // ctx.beginPath()
+      // ctx.strokeStyle = "red"
+      // ctx.arc(150, 150, 20, 0, (Math.PI/180)*180 ,true)
+      // ctx.rect(100,100, 100,100)
+      // ctx.stroke()
+
+      // ctx.beginPath();
+      // ctx.moveTo(75, 25);
+      // ctx.quadraticCurveTo(25, 25, 25, 62.5);
+      // ctx.quadraticCurveTo(25, 100, 50, 100);
+      // ctx.quadraticCurveTo(50, 120, 30, 125);
+      // ctx.quadraticCurveTo(60, 120, 65, 100);
+      // ctx.quadraticCurveTo(125, 100, 125, 62.5);
+      // ctx.quadraticCurveTo(125, 25, 75, 25);
+      // ctx.stroke();
+
+      // ctx.beginPath()
+      // ctx.moveTo(150, 0)
+      // ctx.quadraticCurveTo(280, 50, 300, 150)
+      // ctx.quadraticCurveTo(300, 275, 150, 300)
+      // // ctx.quadraticCurveTo(, , 0 , 150)
+
+      // ctx.stroke();
+      // function draw() {
+      //   var canvas = document.getElementById('canvas');
+      //   if (canvas.getContext) {
+      //     var ctx = canvas.getContext('2d');
+
+      //     var rectangle = new Path2D();
+      //     rectangle.rect(10, 10, 50, 50);
+
+      //     var circle = new Path2D();
+      //     circle.moveTo(125, 35);
+      //     circle.arc(100, 35, 25, 0, 2 * Math.PI);
+
+      //     ctx.stroke(rectangle);
+      //     ctx.fill(circle);
+      //   }
+      // }
+
+      // ctx.font = "30px serif"
+      // ctx.fillText("hello canvas", 50, 50)
+
+      // const imgUrl = canvas.toDataURL("image/png", 1)
+      // const image = document.createElement("img")
+      // image.src = imgUrl
+      // document.body.appendChild(image)
+    </script>
+  </body>
+</html>
